@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b3a">
+<title>DEBBY ACADEMY — Administrator Dashboard</title>
+<style>
+:root{--green:#176b3a;--deep:#104b2a;--pale:#edf7ef;--ink:#183124;--muted:#627368;--line:#dce9df;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:#f3f7f3;color:var(--ink);font-family:Arial,sans-serif}
+header{background:var(--green);color:white;padding:17px 18px}header .wrap{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:20px}.brand small{display:block;font-size:12px;font-weight:400;margin-top:5px}
+button{border:0;border-radius:9px;padding:11px 14px;background:var(--green);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#e8f2ea;color:var(--deep);border:1px solid var(--line)}
+main{max-width:1100px;margin:22px auto;padding:0 14px}.welcome{background:white;border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:16px}
+h1{font-size:24px;margin:0 0 7px;color:var(--deep)}h2{font-size:18px;margin:0 0 12px}.muted{color:var(--muted);line-height:1.5}
+.status{padding:12px;border-radius:9px;background:var(--pale);border-left:4px solid var(--green);margin-top:12px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 22px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}.stat b{display:block;font-size:23px;color:var(--deep);margin-top:5px}.stat span{font-size:12px;color:var(--muted)}.stat-status{font-size:13px;color:var(--muted);margin:8px 0 14px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:white;border:1px solid var(--line);border-radius:13px;padding:16px;min-height:125px}
+.tile h3{margin:0 0 8px;font-size:16px;color:var(--deep)}.tile p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.tile .tag{display:inline-block;margin-top:12px;padding:5px 8px;background:#fff5d9;color:#775600;border-radius:20px;font-size:11px;font-weight:700}
+#app{display:none}#login{max-width:480px;margin:35px auto;background:white;border:1px solid var(--line);border-radius:15px;padding:22px}
+label{display:block;font-size:14px;font-weight:700;margin:13px 0 6px}input{width:100%;padding:13px;border:1px solid #b9cbbd;border-radius:8px;font-size:16px}
+#message{min-height:22px;font-size:14px;margin-top:10px}footer{text-align:center;padding:24px;color:var(--muted);font-size:12px}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.grid{grid-template-columns:1fr}h1{font-size:21px}}
+
+/* Student management */
+.student-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+.student-toolbar{display:grid;grid-template-columns:1.5fr 1fr auto;gap:9px;align-items:end;margin:12px 0}
+.student-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.student-form label{margin:0}.student-form input,.student-form select,.student-form textarea,.student-toolbar input,.student-toolbar select{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px;background:#fff;color:var(--ink)}
+.student-form textarea{min-height:42px;resize:vertical}.student-actions{display:flex;gap:7px;flex-wrap:wrap}.student-actions button{padding:8px 10px;font-size:12px}.student-table-wrap{overflow-x:auto;margin-top:12px}.student-table{width:100%;border-collapse:collapse;min-width:680px}.student-table th,.student-table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px}.student-table th{background:#f2f8f3;color:var(--deep)}.student-note{font-size:13px;color:var(--muted);margin:8px 0}.student-message{padding:10px;border-radius:8px;background:var(--pale);margin:10px 0;font-size:13px;display:none}.student-message.error{background:#fff0ef;color:#922b25}.student-form .wide{grid-column:1/-1}.student-toolbar label{margin:0}.student-toolbar .searchbox{min-width:0}
+@media(max-width:700px){.student-form{grid-template-columns:1fr 1fr}.student-toolbar{grid-template-columns:1fr 1fr}.student-toolbar button{grid-column:1/-1}.student-form .wide{grid-column:1/-1}}
+@media(max-width:430px){.student-form,.student-toolbar{grid-template-columns:1fr}}
+
+
+/* Staff & Guidance management */
+.staff-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+.staff-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.staff-form label{margin:0}.staff-form input,.staff-form select,.staff-form textarea,.staff-toolbar input,.staff-toolbar select{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px;background:#fff;color:var(--ink)}
+.staff-form textarea{min-height:42px;resize:vertical}.staff-form .wide{grid-column:1/-1}
+.staff-toolbar{display:grid;grid-template-columns:1.5fr 1fr auto;gap:9px;align-items:end;margin:12px 0}
+.staff-toolbar label{margin:0}.staff-table-wrap{overflow-x:auto;margin-top:12px}.staff-table{width:100%;border-collapse:collapse;min-width:760px}.staff-table th,.staff-table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px}.staff-table th{background:#f2f8f3;color:var(--deep)}
+.staff-note{font-size:13px;color:var(--muted);margin:8px 0}.staff-message{padding:10px;border-radius:8px;background:var(--pale);margin:10px 0;font-size:13px;display:none}.staff-message.error{background:#fff0ef;color:#922b25}.staff-actions{display:flex;gap:7px;flex-wrap:wrap}.staff-actions button{padding:8px 10px;font-size:12px}
+@media(max-width:700px){.staff-form{grid-template-columns:1fr 1fr}.staff-toolbar{grid-template-columns:1fr 1fr}.staff-toolbar button{grid-column:1/-1}}
+@media(max-width:430px){.staff-form,.staff-toolbar{grid-template-columns:1fr}}
+
+
+/* Parents & Guardians — Batch 4 */
+.parent-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+.parent-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.parent-form label{margin:0}.parent-form input,.parent-form select,.parent-toolbar input,.parent-toolbar select{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px;background:#fff;color:var(--ink)}
+.parent-form .wide{grid-column:1/-1}.parent-toolbar{display:grid;grid-template-columns:1.5fr auto;gap:9px;align-items:end;margin:12px 0}.parent-toolbar label{margin:0}
+.parent-table-wrap{overflow-x:auto;margin-top:12px}.parent-table{width:100%;border-collapse:collapse;min-width:760px}.parent-table th,.parent-table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}.parent-table th{background:#f2f8f3;color:var(--deep)}
+.parent-actions{display:flex;gap:7px;flex-wrap:wrap}.parent-actions button{padding:8px 10px;font-size:12px}.parent-message{padding:10px;border-radius:8px;background:var(--pale);margin:10px 0;font-size:13px;display:none}.parent-message.error{background:#fff0ef;color:#922b25}
+.parent-note{font-size:13px;color:var(--muted);margin:8px 0;line-height:1.5}
+.exam-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}.exam-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.exam-form label{margin:0}.exam-form input,.exam-form select,.exam-form textarea{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px;background:#fff}.exam-table-wrap{overflow-x:auto;margin-top:12px}.exam-table{width:100%;border-collapse:collapse;min-width:700px}.exam-table th,.exam-table td{text-align:left;padding:9px;border-bottom:1px solid var(--line);font-size:13px}.exam-table th{background:#f2f8f3;color:var(--deep)}.exam-message{padding:10px;border-radius:8px;background:var(--pale);margin:10px 0;font-size:13px;display:none}.exam-message.error{background:#fff0ef;color:#922b25}.exam-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}@media(max-width:700px){.exam-form{grid-template-columns:1fr 1fr}}@media(max-width:430px){.exam-form{grid-template-columns:1fr}}.parent-link-box{background:#f7faf7;border:1px solid var(--line);border-radius:10px;padding:14px;margin:16px 0}.parent-checks{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0}.parent-checks label{margin:0;font-weight:500}.parent-checks input{width:auto;margin-right:6px}
+@media(max-width:700px){.parent-form{grid-template-columns:1fr 1fr}.parent-toolbar{grid-template-columns:1fr}.parent-form .wide{grid-column:1/-1}}
+@media(max-width:430px){.parent-form{grid-template-columns:1fr}}
+
+
+/* Attendance & Welfare */
+.attendance-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+.attendance-toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin:12px 0}
+.attendance-toolbar label{margin:0}
+.attendance-toolbar select,.attendance-toolbar input,.attendance-table select,.attendance-table input{width:100%;padding:10px;border:1px solid #b9cbbd;border-radius:8px;background:#fff;color:var(--ink);font-size:14px}
+.attendance-table-wrap{overflow-x:auto;margin-top:12px}
+.attendance-table{width:100%;border-collapse:collapse;min-width:680px}
+.attendance-table th,.attendance-table td{text-align:left;padding:9px;border-bottom:1px solid var(--line);font-size:13px}
+.attendance-table th{background:#f2f8f3;color:var(--deep)}
+.attendance-table td:nth-child(4){min-width:150px}
+.attendance-message{padding:10px;border-radius:8px;background:var(--pale);margin:10px 0;font-size:13px;display:none}
+.attendance-message.error{background:#fff0ef;color:#922b25}
+@media(max-width:700px){.attendance-toolbar{grid-template-columns:1fr 1fr}.attendance-toolbar button{grid-column:1/-1}}
+@media(max-width:430px){.attendance-toolbar{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">DEBBY ACADEMY<small>NURSERY · PRIMARY · SECONDARY | Excellence in Christ</small></div><button id="signout" class="secondary" style="display:none">Sign out</button></div></header>
+<main>
+<section id="login">
+<h1>Administrator sign in</h1><p class="muted">Authorised DEBBY ACADEMY administrators only.</p>
+<form id="form"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required><button id="submit" style="width:100%;margin-top:17px">Sign in securely</button></form>
+<div id="message" role="status" aria-live="polite"></div>
+</section>
+<section id="app">
+<div class="welcome"><h1>HOD / School Administrator Dashboard</h1><div id="identity" class="muted">Checking administrator access…</div><div class="status"><b>Build stage:</b> Student, Staff & Guidance, Parent registration/linking, Attendance, Exams & Results, announcements, result-code generation, published-result report views and academic settings are included. Parent self-service results are available after applying the parent-portal add-on SQL and linking parent Auth accounts. External SMS/WhatsApp/email/push delivery is not connected.</div></div>
+<h2>Live school overview</h2>
+<div id="analytics-status" class="stat-status" role="status" aria-live="polite">Loading school statistics…</div>
+<div id="analytics" class="stats">
+ <div class="stat"><span>Total students</span><b id="stat-students">—</b></div>
+ <div class="stat"><span>Active students</span><b id="stat-active-students">—</b></div>
+ <div class="stat"><span>Total staff</span><b id="stat-staff">—</b></div>
+ <div class="stat"><span>Active staff</span><b id="stat-active-staff">—</b></div>
+ <div class="stat"><span>Teachers</span><b id="stat-teachers">—</b></div>
+ <div class="stat"><span>Classes</span><b id="stat-classes">—</b></div>
+ <div class="stat"><span>Present today</span><b id="stat-present">—</b></div>
+ <div class="stat"><span>Absent today</span><b id="stat-absent">—</b></div>
+</div>
+
+<section id="student-management" class="student-panel" style="display:none" aria-labelledby="student-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="student-heading">Student Management</h2><p class="student-note">Register and manage student records. Archiving preserves records; it does not permanently delete them.</p></div><button type="button" class="secondary" id="close-students">Close</button></div>
+ <div id="student-message" class="student-message" role="status" aria-live="polite"></div>
+ <form id="student-form">
+  <input type="hidden" id="student-id">
+  <div class="student-form">
+   <label>First name *<input id="st-first" required maxlength="80" autocomplete="given-name"></label>
+   <label>Middle name<input id="st-middle" maxlength="80"></label>
+   <label>Last name *<input id="st-last" required maxlength="80" autocomplete="family-name"></label>
+   <label>Class<select id="st-class"><option value="">Select class</option></select></label>
+   <label>Date of birth<input id="st-dob" type="date"></label>
+   <label>Gender<select id="st-gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></label>
+   <label>Admission date<input id="st-admission" type="date"></label>
+   <label class="wide">Address<textarea id="st-address" maxlength="500"></textarea></label>
+  </div>
+  <div class="student-actions" style="margin-top:12px"><button id="student-save" type="submit">Register student</button><button type="button" class="secondary" id="student-reset">Clear form</button></div>
+ </form>
+ <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+ <h2 style="margin-bottom:4px">Student records</h2>
+ <div class="student-toolbar">
+  <label class="searchbox">Search name or registration number<input id="student-search" type="search" placeholder="Search students…"></label>
+  <label>Filter by class<select id="student-filter"><option value="">All classes</option></select></label>
+  <button type="button" id="student-refresh">Refresh records</button>
+ </div>
+ <div class="student-table-wrap"><table class="student-table"><thead><tr><th>Reg. number</th><th>Student</th><th>Class</th><th>Status</th><th>Actions</th></tr></thead><tbody id="student-rows"><tr><td colspan="5">Open Student Management to load records.</td></tr></tbody></table></div>
+ <p class="student-note" id="student-count"></p>
+</section>
+
+
+<section id="staff-management" class="staff-panel" style="display:none" aria-labelledby="staff-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="staff-heading">Staff &amp; Guidance Management</h2><p class="staff-note">Create and manage staff records, roles, class assignments and subject responsibilities. This creates staff records, not login accounts.</p></div><button type="button" class="secondary" id="close-staff">Close</button></div>
+ <div id="staff-message" class="staff-message" role="status" aria-live="polite"></div>
+ <form id="staff-form">
+  <input type="hidden" id="staff-id">
+  <div class="staff-form">
+   <label>First name *<input id="sf-first" required maxlength="80"></label>
+   <label>Middle name<input id="sf-middle" maxlength="80"></label>
+   <label>Last name *<input id="sf-last" required maxlength="80"></label>
+   <label>Staff role *<select id="sf-role" required><option value="">Select role</option><option value="nursery_teacher">Nursery Teacher</option><option value="primary_teacher">Primary Teacher</option><option value="secondary_teacher">Secondary Teacher</option><option value="administrative_staff">Administrative Staff</option><option value="accountant">Accountant</option><option value="ict_officer">ICT Officer</option><option value="other">Other</option></select></label>
+   <label>Phone number<input id="sf-phone" type="tel" maxlength="30"></label>
+   <label>Email address<input id="sf-email" type="email" maxlength="254"></label>
+   <label>Assigned class<select id="sf-class"><option value="">No class assigned</option></select></label>
+   <label>Date joined<input id="sf-date" type="date"></label>
+   <label>Subjects (separate with commas)<input id="sf-subjects" maxlength="500" placeholder="e.g. Mathematics, Basic Science"></label>
+   <label class="wide"><span><input id="sf-guidance" type="checkbox" style="width:auto;margin-right:8px">Also assign Guidance responsibility</span></label>
+   <label class="wide">Address<textarea id="sf-address" maxlength="500"></textarea></label>
+   <label class="wide">Qualifications / notes<textarea id="sf-qualifications" maxlength="1000"></textarea></label>
+  </div>
+  <div class="staff-actions" style="margin-top:12px"><button id="staff-save" type="submit">Register staff</button><button type="button" class="secondary" id="staff-reset">Clear form</button></div>
+ </form>
+ <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+ <h2 style="margin-bottom:4px">Staff directory</h2>
+ <div class="staff-toolbar">
+  <label>Search name, ID or email<input id="staff-search" type="search" placeholder="Search staff…"></label>
+  <label>Filter status<select id="staff-status-filter"><option value="">All statuses</option><option value="active">Active</option><option value="archived">Archived</option></select></label>
+  <button type="button" id="staff-refresh">Refresh staff</button>
+ </div>
+ <div class="staff-table-wrap"><table class="staff-table"><thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Guidance</th><th>Class</th><th>Status</th><th>Actions</th></tr></thead><tbody id="staff-rows"><tr><td colspan="7">Open Staff &amp; Guidance to load records.</td></tr></tbody></table></div>
+ <p class="staff-note" id="staff-count"></p>
+ <div class="parent-link-box" style="margin-top:18px">
+  <h3>Activate Teacher / Guidance login</h3>
+  <p class="staff-note">First create the staff member's Auth account in Supabase Authentication. Use the same email saved on the active staff record. Then paste the Auth user UUID below. Never enter a password here.</p>
+  <form id="staff-auth-link-form" class="staff-form">
+   <label>Active staff member *<select id="staff-auth-record" required><option value="">Open staff directory first</option></select></label>
+   <label class="wide">Supabase Auth user UUID *<input id="staff-auth-uuid" required maxlength="36" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" pattern="[0-9a-fA-F-]{36}"></label>
+   <div class="wide"><button type="submit" id="staff-auth-link-button">Link secure login</button><span id="staff-auth-link-message" class="staff-note" role="status" aria-live="polite"></span></div>
+  </form>
+  <p class="staff-note"><a href="teacher.html" target="_blank" rel="noopener">Open Teacher Portal</a> · <a href="guidance.html" target="_blank" rel="noopener">Open Guidance Portal</a></p>
+ </div>
+</section>
+
+
+<section id="parent-management" class="parent-panel" style="display:none" aria-labelledby="parent-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="parent-heading">Parents &amp; Guardians</h2><p class="parent-note">Manage parent profiles and link guardians to existing student records. A profile does not automatically create a login account.</p></div><button type="button" class="secondary" id="close-parents">Close</button></div>
+ <div id="parent-message" class="parent-message" role="status" aria-live="polite"></div>
+ <form id="parent-form">
+  <input type="hidden" id="parent-id">
+  <div class="parent-form">
+   <label>Parent / guardian full name *<input id="pa-name" required maxlength="160" autocomplete="name"></label>
+   <label>Email address<input id="pa-email" type="email" maxlength="254" autocomplete="email"></label>
+   <label>Phone number<input id="pa-phone" type="tel" maxlength="30" autocomplete="tel"></label>
+   <label>Alternative phone<input id="pa-alt-phone" type="tel" maxlength="30"></label>
+   <label class="wide">Home address<input id="pa-address" maxlength="500" autocomplete="street-address"></label>
+  </div>
+  <div class="parent-actions" style="margin-top:12px"><button id="parent-save" type="submit">Register parent / guardian</button><button type="button" class="secondary" id="parent-reset">Clear form</button></div>
+ </form>
+ <div class="parent-link-box">
+  <h2 style="margin-bottom:4px">Link a parent to a student</h2>
+  <p class="parent-note">You can link one guardian to several children, or link several guardians to the same child.</p>
+  <form id="parent-link-form">
+   <div class="parent-form">
+    <label>Parent / guardian *<select id="link-parent" required><option value="">Select parent</option></select></label>
+    <label>Student *<select id="link-student" required><option value="">Select student</option></select></label>
+   </div>
+   <div class="parent-checks">
+    <label><input id="link-primary" type="checkbox">Primary contact</label>
+    <label><input id="link-results" type="checkbox" checked>Receives results</label>
+    <label><input id="link-announcements" type="checkbox" checked>Receives announcements</label>
+   </div>
+   <button id="parent-link-save" type="submit">Save parent–student link</button>
+  </form>
+ </div>
+ <h2 style="margin-bottom:4px">Parent &amp; guardian directory</h2>
+ <div class="parent-toolbar"><label>Search parent, phone or email<input id="parent-search" type="search" placeholder="Search parents…"></label><button type="button" id="parent-refresh">Refresh directory</button></div>
+ <div class="parent-table-wrap"><table class="parent-table"><thead><tr><th>Parent / guardian</th><th>Contact</th><th>Linked children</th><th>Account status</th><th>Actions</th></tr></thead><tbody id="parent-rows"><tr><td colspan="5">Open Parents &amp; Guardians to load records.</td></tr></tbody></table></div>
+ <p class="parent-note" id="parent-count"></p>
+ <div class="parent-link-box">
+  <h2 style="margin-bottom:4px">Activate Parent Portal login</h2>
+  <p class="parent-note">First create the parent’s Auth account in Supabase Authentication using the same email as the parent profile. Then select the parent and paste the Auth user UUID. Never enter a password here.</p>
+  <form id="parent-auth-link-form" class="parent-form">
+   <label>Parent / guardian *<select id="parent-auth-record" required><option value="">Open parent directory first</option></select></label>
+   <label class="wide">Supabase Auth user UUID *<input id="parent-auth-uuid" required maxlength="36" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" pattern="[0-9a-fA-F-]{36}"></label>
+   <div class="wide"><button type="submit" id="parent-auth-link-button">Link parent sign-in</button><span id="parent-auth-link-message" class="parent-note" role="status" aria-live="polite"></span></div>
+  </form>
+  <p class="parent-note"><a href="parent.html" target="_blank" rel="noopener">Open Parent Portal</a></p>
+ </div>
+</section>
+
+<section id="exam-management" class="exam-panel" style="display:none" aria-labelledby="exam-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="exam-heading">Examinations, Scores &amp; Approval</h2><p class="muted">Create subjects and class assessments, inspect submitted marks, return work for correction, approve and publish results.</p></div><button type="button" class="secondary" id="close-exams">Close</button></div>
+ <div id="exam-message" class="exam-message" role="status" aria-live="polite"></div>
+ <h3>Subject setup</h3><form id="subject-form" class="exam-form"><label>Subject name *<input id="subject-name" required maxlength="100" placeholder="e.g. Mathematics"></label><label>Subject code<input id="subject-code" maxlength="20" placeholder="e.g. MTH"></label><div style="align-self:end"><button type="submit">Save subject</button></div></form>
+ <p class="muted" id="subject-list" style="font-size:13px">Loading subjects…</p>
+ <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+ <h3>Create class assessment</h3><form id="assessment-form" class="exam-form">
+  <label>Assessment name *<input id="assessment-name" required value="End of Term Examination" maxlength="100"></label>
+  <label>Academic session *<input id="assessment-session" required placeholder="2026/2027"></label>
+  <label>Term *<select id="assessment-term"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></label>
+  <label>Class *<select id="assessment-class" required><option value="">Select class</option></select></label>
+  <label>Subject *<select id="assessment-subject" required><option value="">Select subject</option></select></label>
+  <label>CA maximum *<input id="assessment-ca" type="number" min="1" max="99" value="40" required></label>
+  <label>Exam maximum *<input id="assessment-exam" type="number" min="1" max="99" value="60" required></label>
+  <div style="align-self:end"><button type="submit">Create assessment</button></div>
+ </form>
+ <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3>Assessment &amp; result review queue</h3><button type="button" class="secondary" id="assessment-refresh">Refresh</button></div>
+ <div class="exam-table-wrap"><table class="exam-table"><thead><tr><th>Assessment</th><th>Session / Term</th><th>Class</th><th>Subject</th><th>Scores</th><th>Status</th><th>Review</th></tr></thead><tbody id="assessment-rows"><tr><td colspan="7">Create an assessment to begin.</td></tr></tbody></table></div>
+ <div id="score-review" style="display:none;margin-top:18px"><h3 id="score-review-title">Review submitted scores</h3><div class="exam-table-wrap"><table class="exam-table"><thead><tr><th>Student</th><th>CA</th><th>Exam</th><th>Total</th><th>Grade</th><th>Status</th></tr></thead><tbody id="score-review-rows"></tbody></table></div><label>Proprietress remarks<textarea id="admin-review-comment" style="width:100%;min-height:65px;padding:10px;border:1px solid #b9cbbd;border-radius:8px"></textarea></label><div class="exam-actions"><button type="button" id="return-assessment" class="secondary">Return for correction</button><button type="button" id="approve-assessment">Approve results</button><button type="button" id="publish-assessment">Publish results</button></div></div>
+ <p class="muted" style="font-size:12px;margin-top:12px">Important: creating assessments and approving results are administrator actions. Teacher login linking and teacher score entry use separate staff accounts and permissions. Parent result access requires the parent-portal add-on migration and an activated parent account.</p>
+</section>
+
+<section id="batch9-11-panel" class="exam-panel" style="display:none">
+ <div style="display:flex;justify-content:space-between;align-items:center"><div><h2>Reports, Announcements & Settings</h2><p class="muted">Additional administrator tools.</p></div><button type="button" class="secondary" id="close-batch9">Close</button></div>
+ <div id="batch9-message" class="exam-message" role="status"></div>
+ <h3>Publish school announcement</h3>
+ <form id="announcement-form" class="exam-form"><label>Title *<input id="ann-title" required maxlength="160"></label><label>Audience<select id="ann-audience"><option value="all">Everyone</option><option value="parents">Parents</option><option value="teachers">Teachers</option><option value="guidance">Guidance</option><option value="staff">All staff</option></select></label><label>Message *<textarea id="ann-message" required rows="2"></textarea></label><div><button type="submit">Publish announcement</button></div></form>
+ <div id="ann-list" class="exam-table-wrap"></div>
+ <hr><h3>Parent messages &amp; enquiries inbox</h3><p class="muted">Messages sent from parent.html appear here. Replies are visible inside the parent portal; no SMS/email is sent.</p><button type="button" class="secondary" id="refresh-school-messages">Refresh inbox</button><div id="school-messages-inbox" class="exam-table-wrap">Open this panel to load messages.</div>
+ <hr><h3>Generate student result access codes</h3><form id="codes-form" class="exam-form"><label>Academic session *<input id="codes-session" required value="2026/2027"></label><label>Term *<select id="codes-term"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></label><label>Class *<select id="codes-class" required><option value="">Select class</option></select></label><div><button type="submit">Generate codes</button></div></form><div id="codes-output"></div>
+ <hr><h3>Published report cards</h3><form id="reports-form" class="exam-form"><label>Academic session<input id="reports-session" required value="2026/2027"></label><label>Term<select id="reports-term"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></label><label>Class<select id="reports-class" required><option value="">Select class</option></select></label><div><button type="submit">Load report cards</button></div></form><div id="reports-output"></div>
+ <hr><h3>School details & settings</h3><p class="muted">Default school identity: DEBBY ACADEMY · Excellence in Christ · Ore-Ofe Zone Two, off Ilawe Road, Ado-Ekiti, Ekiti State · 07032295813 · ajiwebudeborah@gmail.com</p>
+ <form id="settings-form" class="exam-form"><label>Academic session<input id="setting-session" value="2026/2027"></label><label>Current term<select id="setting-term"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></label><div><button type="submit">Save academic settings</button></div></form>
+</section>
+
+<h2>School management</h2>
+<div class="grid">
+<article class="tile"><h3>Student Management</h3><p>Register students, search records, assign classes, update details and archive records.</p><button type="button" id="open-students" style="margin-top:12px">Open Student Management</button></article>
+<article class="tile"><h3>Staff &amp; Guidance</h3><p>Register staff records, assign roles, classes, subjects and additional Guidance responsibility.</p><button type="button" id="open-staff" style="margin-top:12px">Open Staff Management</button></article>
+<article class="tile"><h3>Parents &amp; Guardians</h3><p>Register parent profiles, search the directory and link guardians to one or more students.</p><button type="button" id="open-parents" style="margin-top:12px">Open Parents &amp; Guardians</button></article>
+<article class="tile"><h3>Classes &amp; Subjects</h3><p>View all school classes and subjects, assign subjects to classes and remove assignments when needed.</p><button type="button" id="open-classes-subjects" class="secondary" style="margin-top:12px">Manage Classes &amp; Subjects</button></article>
+<article class="tile"><h3>Results & Approval</h3><p>Create assessments, manage subjects and review submitted scores.</p><button type="button" id="open-exams" style="margin-top:12px">Open Exams &amp; Results</button></article>
+<article class="tile"><h3>Performance Analysis</h3><p>Review saved performance metrics and ranking snapshots by term, class and subject.</p><button type="button" id="open-performance" class="secondary" style="margin-top:12px">Open Performance Analysis</button></article>
+<article class="tile"><h3>Result Access Codes</h3><p>Generate random eight-digit term-specific result codes in bulk.</p><button type="button" id="open-batch9" style="margin-top:12px">Open Results & Communications</button></article>
+<article class="tile"><h3>News & Notifications</h3><p>Publish school announcements for selected audiences.</p><button type="button" class="secondary" id="open-batch9-news" style="margin-top:12px">Manage announcements</button></article>
+<article class="tile"><h3>Messages & Enquiries</h3><p>Review parent enquiries, write replies and close conversations.</p><button type="button" id="open-batch9-messages" class="secondary" style="margin-top:12px">Open Messages & Enquiries</button></article>
+<article class="tile"><h3>Attendance & Welfare</h3><p>Record daily attendance by class, update attendance statuses and add notes.</p><button id="open-attendance" class="secondary" type="button" style="margin-top:12px">Open Attendance</button></article>
+<article class="tile"><h3>Report Cards & Archive</h3><p>Load published term results for class report preparation.</p><button type="button" class="secondary" id="open-batch9-reports" style="margin-top:12px">Open report cards</button></article>
+<article class="tile"><h3>School Settings</h3><p>Manage current academic session and term.</p><button type="button" class="secondary" id="open-batch9-settings" style="margin-top:12px">Open settings</button></article>
+</div>
+</section>
+
+
+
+<section id="classes-subjects-panel" class="exam-panel" style="display:none" aria-labelledby="classes-subjects-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="classes-subjects-heading">Classes &amp; Subjects</h2><p class="muted">Review the school's classes and subjects, then manage class-subject assignments.</p></div><button type="button" class="secondary" id="close-classes-subjects">Close</button></div>
+ <div id="classes-subjects-message" class="exam-message" role="status" aria-live="polite"></div>
+ <div class="grid" style="margin:14px 0"><article class="tile"><h3>Assign a subject</h3><label for="cs-class">Class</label><select id="cs-class" style="width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px"></select><label for="cs-subject">Subject</label><select id="cs-subject" style="width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px"></select><button type="button" id="cs-assign" style="margin-top:12px">Assign subject</button></article><article class="tile"><h3>School structure</h3><p id="cs-counts">Loading classes and subjects…</p><button type="button" id="cs-refresh" class="secondary" style="margin-top:12px">Refresh lists</button></article></div>
+ <h3>Current class-subject assignments</h3><div id="cs-assignments" class="exam-table-wrap">Loading assignments…</div>
+</section>
+
+<section id="performance-panel" class="exam-panel" style="display:none" aria-labelledby="performance-heading">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 id="performance-heading">Performance Analysis</h2><p class="muted">Saved school performance metrics and rankings, grouped by academic term, class and subject.</p></div><button type="button" class="secondary" id="close-performance">Close</button></div>
+ <div id="performance-message" class="exam-message" role="status" aria-live="polite"></div>
+ <div class="exam-actions"><button type="button" id="refresh-performance">Refresh analysis</button></div>
+ <div id="performance-summary" class="grid" style="margin:14px 0"></div>
+ <div class="exam-table-wrap"><table class="exam-table"><thead><tr><th>Metric</th><th>Value</th><th>Ranking</th><th>Academic Term ID</th><th>Class ID</th><th>Subject ID</th><th>Calculated</th></tr></thead><tbody id="performance-rows"><tr><td colspan="7">Open Performance Analysis to load saved metrics.</td></tr></tbody></table></div>
+ <p class="muted" style="font-size:12px">This screen displays metrics already saved in the performance snapshots table. It does not invent grades or calculate rankings where no snapshot exists.</p>
+</section>
+
+<section id="attendance-panel" class="attendance-panel" style="display:none">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <div><h2>Student Attendance Register</h2><p class="muted">Choose a class and date, then mark each active student present, absent, late or excused.</p></div>
+  <button id="close-attendance" class="secondary" type="button">Close</button>
+ </div>
+ <div class="attendance-toolbar">
+  <label>Class *
+   <select id="attendance-class"><option value="">Loading classes…</option></select>
+  </label>
+  <label>Attendance date *
+   <input id="attendance-date" type="date">
+  </label>
+  <button id="load-attendance" type="button">Load Register</button>
+ </div>
+ <div id="attendance-message" class="attendance-message"></div>
+ <div class="attendance-table-wrap">
+  <table class="attendance-table">
+   <thead><tr><th>Reg. number</th><th>Student</th><th>Status</th><th>Note</th></tr></thead>
+   <tbody id="attendance-rows"><tr><td colspan="4">Choose a class and date, then load the register.</td></tr></tbody>
+  </table>
+ </div>
+ <div style="display:flex;justify-content:flex-end;margin-top:14px">
+  <button id="save-attendance" type="button" disabled>Save Attendance</button>
+ </div>
+ <p class="muted" style="font-size:12px">Only active students in the selected class appear. Saving again updates that student's attendance for the selected date.</p>
+</section>
+</main>
+<footer>DEBBY ACADEMY · Ore-Ofe Zone Two, off Ilawe Road, Ado-Ekiti · 07032295813</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(()=> {
+ const SUPABASE_URL="https://tjanijrtknykskexawpc.supabase.co";
+ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_x8pHV4exEwWrQJwWkbP4VQ_wz9GzKhl";
+ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+ const login=document.getElementById("login"), app=document.getElementById("app"), msg=document.getElementById("message"), out=document.getElementById("signout");
+ function setStat(id,value){document.getElementById(id).textContent=(value===null||value===undefined)?"0":String(value);}
+ async function loadAnalytics(){
+   const status=document.getElementById("analytics-status");
+   status.textContent="Loading live statistics from the school database…";
+   const {data,error}=await sb.rpc("get_school_analytics_v2");
+   if(error){status.textContent="Live statistics could not be loaded: "+error.message;return;}
+   const a=Array.isArray(data)?(data[0]||{}):(data||{});
+   setStat("stat-students",a.total_students);
+   setStat("stat-active-students",a.active_students);
+   setStat("stat-staff",a.total_staff);
+   setStat("stat-active-staff",a.active_staff);
+   setStat("stat-teachers",a.teachers);
+   setStat("stat-classes",a.total_classes ?? a.classes);
+   setStat("stat-present",a.present_today);
+   setStat("stat-absent",a.absent_today);
+   status.textContent="Live school statistics loaded successfully.";
+ }
+ async function showSession(session){
+   if(!session){login.style.display="block";app.style.display="none";out.style.display="none";return;}
+   login.style.display="none";app.style.display="block";out.style.display="inline-block";
+   const {data,error}=await sb.from("school_administrators").select("administrator_name,administrator_email,administrator_type,active").eq("user_id",session.user.id).maybeSingle();
+   if(error){document.getElementById("identity").textContent="Signed in, but administrator verification could not be completed: "+error.message;return;}
+   if(!data || !data.active || data.administrator_type!=="full_admin"){
+     document.getElementById("identity").textContent="Signed in as "+session.user.email+", but no active full-administrator record was confirmed. Sign out and contact the database administrator.";
+     return;
+   }
+   document.getElementById("identity").textContent="Welcome, "+data.administrator_name+" · "+data.administrator_email+" · Full administrator access verified.";
+   await loadAnalytics();
+ }
+ sb.auth.getSession().then(({data})=>showSession(data.session));
+ document.getElementById("form").addEventListener("submit",async e=>{
+   e.preventDefault();const b=document.getElementById("submit");b.disabled=true;msg.textContent="Signing in…";
+   const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById("email").value.trim(),password:document.getElementById("password").value});
+   b.disabled=false;if(error){msg.textContent="Sign-in failed: "+error.message;return;}msg.textContent="";await showSession(data.session);
+ });
+ out.addEventListener("click",async()=>{await sb.auth.signOut();await showSession(null);});
+ // Student Management frontend: uses the four verified SECURITY DEFINER RPCs.
+ const studentPanel=document.getElementById("student-management");
+ const studentMsg=document.getElementById("student-message");
+ const studentRows=document.getElementById("student-rows");
+ const studentForm=document.getElementById("student-form");
+ let studentClasses=[]; let studentCache=[]; let searchTimer=null;
+ const byId=id=>document.getElementById(id);
+ const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+ function studentNotice(message,isError=false){studentMsg.textContent=message;studentMsg.className="student-message"+(isError?" error":"");studentMsg.style.display="block";}
+ function hideStudentNotice(){studentMsg.style.display="none";}
+ function resetStudentForm(){studentForm.reset();byId("student-id").value="";byId("student-save").textContent="Register student";}
+ function className(id){const found=studentClasses.find(c=>String(c.id)===String(id));return found?found.class_name:"Unassigned";}
+ async function loadStudentClasses(){
+  const {data,error}=await sb.from("school_classes").select("id,class_name").order("class_name");
+  if(error){studentNotice("Could not load classes: "+error.message,true);return false;}
+  studentClasses=data||[];
+  const options='<option value="">'+"Select class"+'</option>'+studentClasses.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.class_name)+'</option>').join("");
+  byId("st-class").innerHTML=options;
+  byId("student-filter").innerHTML='<option value="">All classes</option>'+studentClasses.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.class_name)+'</option>').join("");
+  return true;
+ }
+ async function loadStudents(){
+  studentRows.innerHTML='<tr><td colspan="5">Loading student records…</td></tr>';
+  const {data,error}=await sb.rpc("get_school_students_v2",{p_search:byId("student-search").value.trim()||null,p_class_id:byId("student-filter").value?Number(byId("student-filter").value):null});
+  if(error){studentRows.innerHTML='<tr><td colspan="5">Unable to load records.</td></tr>';studentNotice("Student records could not be loaded: "+error.message,true);return;}
+  let rows=Array.isArray(data)?data:(Array.isArray(data?.students)?data.students:[]);
+  studentCache=rows;
+  if(!rows.length){studentRows.innerHTML='<tr><td colspan="5">No student records found.</td></tr>';byId("student-count").textContent="0 student records";return;}
+  studentRows.innerHTML=rows.map(st=>{
+   const full=[st.first_name,st.middle_name,st.last_name].filter(Boolean).join(" ");
+   const status=String(st.status||"active");
+   const archived=status.toLowerCase()==="archived";
+   return '<tr><td>'+esc(st.registration_number)+'</td><td>'+esc(full)+'</td><td>'+esc(st.class_name||className(st.class_id))+'</td><td>'+esc(status)+'</td><td><div class="student-actions"><button type="button" class="secondary" data-edit="'+esc(st.id)+'">Edit</button>'+(archived?'':'<button type="button" class="secondary" data-archive="'+esc(st.id)+'">Archive</button>')+'</div></td></tr>';
+  }).join("");
+  byId("student-count").textContent=rows.length+" student record(s) shown.";
+ }
+ async function openStudentManagement(){
+  studentPanel.style.display="block";studentPanel.scrollIntoView({behavior:"smooth",block:"start"});hideStudentNotice();
+  const ok=await loadStudentClasses();if(ok)await loadStudents();
+ }
+ byId("open-students").addEventListener("click",openStudentManagement);
+ byId("close-students").addEventListener("click",()=>studentPanel.style.display="none");
+ byId("student-reset").addEventListener("click",()=>{resetStudentForm();hideStudentNotice();});
+ byId("student-refresh").addEventListener("click",loadStudents);
+ byId("student-filter").addEventListener("change",loadStudents);
+ byId("student-search").addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(loadStudents,350);});
+ studentForm.addEventListener("submit",async e=>{
+  e.preventDefault();hideStudentNotice();const save=byId("student-save");save.disabled=true;
+  const id=byId("student-id").value;
+  const payload={first_name:byId("st-first").value.trim(),last_name:byId("st-last").value.trim(),middle_name:byId("st-middle").value.trim()||null,class_id:byId("st-class").value?Number(byId("st-class").value):null,date_of_birth:byId("st-dob").value||null,gender:byId("st-gender").value||null,address:byId("st-address").value.trim()||null,admission_date:byId("st-admission").value||null};
+  let result;
+  if(id){result=await sb.rpc("update_school_student_v2",{p_student_id:Number(id),p_updates:payload});}
+  else{const {first_name,last_name,class_id,middle_name,date_of_birth,gender,address,admission_date}=payload;result=await sb.rpc("register_school_student_v2",{p_first_name:first_name,p_last_name:last_name,p_class_id:class_id,p_middle_name:middle_name,p_date_of_birth:date_of_birth,p_gender:gender,p_address:address,p_admission_date:admission_date});}
+  save.disabled=false;
+  if(result.error){studentNotice("Save failed: "+result.error.message,true);return;}
+  const response=result.data||{};if(response.success===false){studentNotice(response.message||"The database did not accept this change.",true);return;}
+  studentNotice(response.message||(id?"Student record updated.":"Student registered successfully.")+(response.registration_number?" Registration number: "+response.registration_number:""));
+  resetStudentForm();await loadStudents();
+ });
+ studentRows.addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit]");const archive=e.target.closest("[data-archive]");
+  if(edit){const st=studentCache.find(x=>String(x.id)===edit.dataset.edit);if(!st)return;
+   byId("student-id").value=st.id;byId("st-first").value=st.first_name||"";byId("st-middle").value=st.middle_name||"";byId("st-last").value=st.last_name||"";byId("st-class").value=st.class_id??"";byId("st-dob").value=st.date_of_birth||"";byId("st-gender").value=st.gender||"";byId("st-address").value=st.address||"";byId("st-admission").value=st.admission_date||"";byId("student-save").textContent="Save changes";studentNotice("Editing "+[st.first_name,st.last_name].filter(Boolean).join(" ")+". Update the fields and save.");studentForm.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  if(archive){const st=studentCache.find(x=>String(x.id)===archive.dataset.archive);if(!st)return;if(!window.confirm("Archive this student record? It will be retained and can no longer be treated as active."))return;
+   archive.disabled=true;const {data,error}=await sb.rpc("archive_school_student_v2",{p_student_id:Number(st.id)});archive.disabled=false;
+   if(error){studentNotice("Archive failed: "+error.message,true);return;}if(data?.success===false){studentNotice(data.message||"Archive was not completed.",true);return;}studentNotice(data?.message||"Student record archived. The record has been retained.");await loadStudents();
+  }
+ });
+
+ // Staff & Guidance frontend: secure operations are handled by SECURITY DEFINER RPCs.
+ const staffPanel=byId('staff-management');
+ const staffMsg=byId('staff-message');
+ const staffRows=byId('staff-rows');
+ const staffForm=byId('staff-form');
+ let staffClasses=[]; let staffCache=[]; let staffSearchTimer=null;
+ const staffRoleLabels={nursery_teacher:'Nursery Teacher',primary_teacher:'Primary Teacher',secondary_teacher:'Secondary Teacher',administrative_staff:'Administrative Staff',accountant:'Accountant',ict_officer:'ICT Officer',other:'Other'};
+ function staffNotice(message,isError=false){staffMsg.textContent=message;staffMsg.className='staff-message'+(isError?' error':'');staffMsg.style.display='block';}
+ function hideStaffNotice(){staffMsg.style.display='none';}
+ function resetStaffForm(){staffForm.reset();byId('staff-id').value='';byId('staff-save').textContent='Register staff';}
+ function staffClassName(id){const c=staffClasses.find(x=>String(x.id)===String(id));return c?c.class_name:'Unassigned';}
+ async function loadStaffClasses(){
+  const {data,error}=await sb.from('school_classes').select('id,class_name').order('class_name');
+  if(error){staffNotice('Could not load classes: '+error.message,true);return false;}
+  staffClasses=data||[];
+  byId('sf-class').innerHTML='<option value="">No class assigned</option>'+staffClasses.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.class_name)+'</option>').join('');
+  return true;
+ }
+ async function loadStaff(){
+  staffRows.innerHTML='<tr><td colspan="7">Loading staff records…</td></tr>';
+  const {data,error}=await sb.rpc('get_school_staff_v1',{p_search:byId('staff-search').value.trim()||null,p_status:byId('staff-status-filter').value||null});
+  if(error){staffRows.innerHTML='<tr><td colspan="7">Unable to load staff records.</td></tr>';staffNotice('Staff records could not be loaded: '+error.message,true);return;}
+  staffCache=Array.isArray(data)?data:(Array.isArray(data?.staff)?data.staff:[]);
+  const authSelect=byId('staff-auth-record');if(authSelect)authSelect.innerHTML='<option value="">Select active staff</option>'+staffCache.filter(x=>x.status==='active').map(x=>'<option value="'+esc(x.id)+'">'+esc([x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' '))+' · '+esc(x.email||'No email')+'</option>').join('');
+  if(!staffCache.length){staffRows.innerHTML='<tr><td colspan="7">No staff records found.</td></tr>';byId('staff-count').textContent='0 staff records';return;}
+  staffRows.innerHTML=staffCache.map(st=>{
+   const full=[st.first_name,st.middle_name,st.last_name].filter(Boolean).join(' ');
+   const guidance=st.guidance_role?'Yes':'No';
+   return '<tr><td>'+esc(st.employee_number)+'</td><td>'+esc(full)+'</td><td>'+esc(staffRoleLabels[st.staff_role]||st.staff_role)+'</td><td>'+guidance+'</td><td>'+esc(st.class_name||staffClassName(st.assigned_class_id))+'</td><td>'+esc(st.status)+'</td><td><div class="staff-actions"><button type="button" class="secondary" data-staff-edit="'+esc(st.id)+'">Edit</button>'+(st.status==='archived'?'':'<button type="button" class="secondary" data-staff-archive="'+esc(st.id)+'">Archive</button>')+'</div></td></tr>';
+  }).join('');
+  byId('staff-count').textContent=staffCache.length+' staff record(s) shown.';
+ }
+ async function openStaffManagement(){staffPanel.style.display='block';staffPanel.scrollIntoView({behavior:'smooth',block:'start'});hideStaffNotice();if(await loadStaffClasses())await loadStaff();}
+ byId('open-staff').addEventListener('click',openStaffManagement);
+ byId('close-staff').addEventListener('click',()=>staffPanel.style.display='none');
+ byId('staff-reset').addEventListener('click',()=>{resetStaffForm();hideStaffNotice();});
+ byId('staff-refresh').addEventListener('click',loadStaff);
+ byId('staff-status-filter').addEventListener('change',loadStaff);
+ byId('staff-search').addEventListener('input',()=>{clearTimeout(staffSearchTimer);staffSearchTimer=setTimeout(loadStaff,350);});
+ staffForm.addEventListener('submit',async e=>{
+  e.preventDefault();hideStaffNotice();const save=byId('staff-save');save.disabled=true;
+  const id=byId('staff-id').value;
+  const payload={first_name:byId('sf-first').value.trim(),middle_name:byId('sf-middle').value.trim()||null,last_name:byId('sf-last').value.trim(),staff_role:byId('sf-role').value,guidance_role:byId('sf-guidance').checked,phone:byId('sf-phone').value.trim()||null,email:byId('sf-email').value.trim()||null,assigned_class_id:byId('sf-class').value?Number(byId('sf-class').value):null,subjects:byId('sf-subjects').value.split(',').map(x=>x.trim()).filter(Boolean),date_joined:byId('sf-date').value||null,address:byId('sf-address').value.trim()||null,qualifications:byId('sf-qualifications').value.trim()||null};
+  const result=id?await sb.rpc('update_school_staff_v1',{p_staff_id:Number(id),p_updates:payload}):await sb.rpc('register_school_staff_v1',{p_first_name:payload.first_name,p_last_name:payload.last_name,p_staff_role:payload.staff_role,p_middle_name:payload.middle_name,p_guidance_role:payload.guidance_role,p_phone:payload.phone,p_email:payload.email,p_assigned_class_id:payload.assigned_class_id,p_subjects:payload.subjects,p_date_joined:payload.date_joined,p_address:payload.address,p_qualifications:payload.qualifications});
+  save.disabled=false;
+  if(result.error){staffNotice('Save failed: '+result.error.message,true);return;}
+  if(result.data?.success===false){staffNotice(result.data.message||'The database did not accept this change.',true);return;}
+  staffNotice(result.data?.message||(id?'Staff record updated.':'Staff registered successfully.')+(result.data?.employee_number?' Staff ID: '+result.data.employee_number:''));resetStaffForm();await loadStaff();await loadAnalytics();
+ });
+ staffRows.addEventListener('click',async e=>{
+  const edit=e.target.closest('[data-staff-edit]');const archive=e.target.closest('[data-staff-archive]');
+  if(edit){const st=staffCache.find(x=>String(x.id)===edit.dataset.staffEdit);if(!st)return;
+   byId('staff-id').value=st.id;byId('sf-first').value=st.first_name||'';byId('sf-middle').value=st.middle_name||'';byId('sf-last').value=st.last_name||'';byId('sf-role').value=st.staff_role||'';byId('sf-guidance').checked=!!st.guidance_role;byId('sf-phone').value=st.phone||'';byId('sf-email').value=st.email||'';byId('sf-class').value=st.assigned_class_id??'';byId('sf-subjects').value=Array.isArray(st.subjects)?st.subjects.join(', '):'';byId('sf-date').value=st.date_joined||'';byId('sf-address').value=st.address||'';byId('sf-qualifications').value=st.qualifications||'';byId('staff-save').textContent='Save changes';staffNotice('Editing '+[st.first_name,st.last_name].filter(Boolean).join(' ')+'. Update the fields and save.');staffForm.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  if(archive){const st=staffCache.find(x=>String(x.id)===archive.dataset.staffArchive);if(!st)return;if(!window.confirm('Archive this staff record? It will be retained and marked inactive.'))return;archive.disabled=true;const {data,error}=await sb.rpc('archive_school_staff_v1',{p_staff_id:Number(st.id)});archive.disabled=false;if(error){staffNotice('Archive failed: '+error.message,true);return;}if(data?.success===false){staffNotice(data.message||'Archive was not completed.',true);return;}staffNotice(data?.message||'Staff record archived and retained.');await loadStaff();await loadAnalytics();}
+ });
+
+
+ byId('staff-auth-link-form').addEventListener('submit',async e=>{
+  e.preventDefault();const msg=byId('staff-auth-link-message'),btn=byId('staff-auth-link-button');
+  const staffId=Number(byId('staff-auth-record').value),authId=byId('staff-auth-uuid').value.trim();
+  if(!staffId||!/^[0-9a-f-]{36}$/i.test(authId)){msg.textContent='Select active staff and enter a valid UUID.';return;}
+  btn.disabled=true;msg.textContent='Linking account…';
+  const {data,error}=await sb.rpc('admin_link_staff_auth_v1',{p_staff_id:staffId,p_auth_user_id:authId});btn.disabled=false;
+  if(error){msg.textContent='Login link failed: '+error.message;return;}
+  msg.textContent=data?.message||'Staff login linked. The staff member can now sign in through the correct portal.';
+  byId('staff-auth-uuid').value='';
+ });
+
+ // Parents & Guardians — Batch 4 frontend.
+ const parentPanel=byId('parent-management');
+ const parentMsg=byId('parent-message');
+ const parentRows=byId('parent-rows');
+ const parentForm=byId('parent-form');
+ const parentLinkForm=byId('parent-link-form');
+ let parentCache=[]; let parentStudentCache=[]; let parentSearchTimer=null;
+ function parentNotice(message,isError=false){parentMsg.textContent=message;parentMsg.className='parent-message'+(isError?' error':'');parentMsg.style.display='block';}
+ function hideParentNotice(){parentMsg.style.display='none';}
+ function resetParentForm(){parentForm.reset();byId('parent-id').value='';byId('parent-save').textContent='Register parent / guardian';}
+ function parentChildrenText(p){const children=Array.isArray(p.children)?p.children:[];if(!children.length)return 'No children linked';return children.map(c=>[c.first_name,c.last_name].filter(Boolean).join(' ')+' ('+(c.registration_number||'No reg. number')+')'+(c.class_name?' — '+c.class_name:'')).join('<br>');}
+ async function loadParentStudents(){
+  const {data,error}=await sb.rpc('get_school_students_v2',{p_search:null,p_class_id:null});
+  if(error){parentNotice('Could not load students for linking: '+error.message,true);return false;}
+  parentStudentCache=Array.isArray(data)?data:(Array.isArray(data?.students)?data.students:[]);
+  const active=parentStudentCache.filter(st=>String(st.status||'active').toLowerCase()==='active');
+  byId('link-student').innerHTML='<option value="">Select student</option>'+active.map(st=>'<option value="'+esc(st.id)+'">'+esc([st.first_name,st.middle_name,st.last_name].filter(Boolean).join(' '))+' — '+esc(st.registration_number||'No reg. number')+'</option>').join('');
+  return true;
+ }
+ async function loadParents(){
+  parentRows.innerHTML='<tr><td colspan="5">Loading parent records…</td></tr>';
+  const {data,error}=await sb.rpc('get_school_parents_v1');
+  if(error){parentRows.innerHTML='<tr><td colspan="5">Unable to load parent records.</td></tr>';parentNotice('Parent directory could not be loaded: '+error.message,true);return;}
+  parentCache=Array.isArray(data)?data:(Array.isArray(data?.parents)?data.parents:[]);
+  const q=byId('parent-search').value.trim().toLowerCase();
+  const filtered=parentCache.filter(p=>!q||[p.full_name,p.email,p.phone,p.alternative_phone].some(v=>String(v||'').toLowerCase().includes(q)));
+  if(!filtered.length){parentRows.innerHTML='<tr><td colspan="5">No matching parent records found.</td></tr>';byId('parent-count').textContent=parentCache.length+' parent profile(s) loaded.';return;}
+  parentRows.innerHTML=filtered.map(p=>'<tr><td><b>'+esc(p.full_name)+'</b><br><small>'+esc(p.id)+'</small></td><td>'+esc(p.phone||'No phone')+'<br>'+esc(p.email||'No email')+'</td><td>'+parentChildrenText(p)+'</td><td>'+esc(p.account_status|| (p.active?'Active':'Inactive'))+'</td><td><div class="parent-actions"><button type="button" class="secondary" data-parent-edit="'+esc(p.id)+'">Edit</button><button type="button" class="secondary" data-parent-link="'+esc(p.id)+'">Link child</button></div></td></tr>').join('');
+  byId('parent-count').textContent=filtered.length+' of '+parentCache.length+' parent profile(s) shown.';
+  const parentOptions=parentCache.filter(p=>p.active!==false).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.full_name)+' — '+esc(p.phone||p.email||'No contact')+'</option>').join('');
+  byId('link-parent').innerHTML='<option value="">Select parent</option>'+parentOptions;
+  byId('parent-auth-record').innerHTML='<option value="">Select parent</option>'+parentOptions;
+ }
+ async function openParentManagement(){parentPanel.style.display='block';parentPanel.scrollIntoView({behavior:'smooth',block:'start'});hideParentNotice();resetParentForm();await loadParents();await loadParentStudents();}
+ byId('open-parents').addEventListener('click',openParentManagement);
+ byId('close-parents').addEventListener('click',()=>parentPanel.style.display='none');
+ byId('parent-reset').addEventListener('click',()=>{resetParentForm();hideParentNotice();});
+ byId('parent-refresh').addEventListener('click',async()=>{hideParentNotice();await loadParents();await loadParentStudents();});
+ byId('parent-search').addEventListener('input',()=>{clearTimeout(parentSearchTimer);parentSearchTimer=setTimeout(loadParents,250);});
+ parentForm.addEventListener('submit',async e=>{
+  e.preventDefault();hideParentNotice();const save=byId('parent-save');save.disabled=true;
+  const id=byId('parent-id').value;
+  const payload={full_name:byId('pa-name').value.trim(),email:byId('pa-email').value.trim()||null,phone:byId('pa-phone').value.trim()||null,alternative_phone:byId('pa-alt-phone').value.trim()||null,address:byId('pa-address').value.trim()||null};
+  const result=id?await sb.rpc('update_school_parent_v1',{p_parent_id:id,p_full_name:payload.full_name,p_email:payload.email,p_phone:payload.phone,p_alternative_phone:payload.alternative_phone,p_address:payload.address}):await sb.rpc('register_school_parent_v1',{p_full_name:payload.full_name,p_email:payload.email,p_phone:payload.phone,p_alternative_phone:payload.alternative_phone,p_address:payload.address});
+  save.disabled=false;
+  if(result.error){parentNotice('Save failed: '+result.error.message,true);return;}
+  if(result.data?.success===false){parentNotice(result.data.message||'The database did not accept this change.',true);return;}
+  parentNotice(result.data?.message||(id?'Parent profile updated.':'Parent profile registered.')+(result.data?.parent_id?' Parent ID: '+result.data.parent_id:''));resetParentForm();await loadParents();
+ });
+ parentLinkForm.addEventListener('submit',async e=>{
+  e.preventDefault();hideParentNotice();const save=byId('parent-link-save');save.disabled=true;
+  const {data,error}=await sb.rpc('link_school_parent_student_v1',{
+   p_parent_id:byId('link-parent').value,
+   p_student_id:Number(byId('link-student').value),
+   p_relationship_id:null,
+   p_is_primary_contact:byId('link-primary').checked,
+   p_receives_results:byId('link-results').checked,
+   p_receives_announcements:byId('link-announcements').checked
+  });
+  save.disabled=false;
+  if(error){parentNotice('Link could not be saved: '+error.message,true);return;}
+  if(data?.success===false){parentNotice(data.message||'The parent–student link was not saved.',true);return;}
+  parentNotice(data?.message||'Parent–student link saved.');parentLinkForm.reset();byId('link-results').checked=true;byId('link-announcements').checked=true;await loadParents();
+ });
+
+ byId('parent-auth-link-form').addEventListener('submit',async e=>{
+  e.preventDefault();const btn=byId('parent-auth-link-button'),msg=byId('parent-auth-link-message');
+  const parentId=byId('parent-auth-record').value,authId=byId('parent-auth-uuid').value.trim();
+  if(!parentId||!/^[0-9a-f-]{36}$/i.test(authId)){msg.textContent='Select a parent and enter a valid UUID.';return;}
+  btn.disabled=true;msg.textContent='Linking parent account…';
+  const {data,error}=await sb.rpc('admin_link_parent_auth_v1',{p_parent_id:parentId,p_auth_user_id:authId});btn.disabled=false;
+  if(error){msg.textContent='Parent login link failed: '+error.message;return;}
+  msg.textContent=data?.message||'Parent login linked. The parent can now sign in at parent.html.';byId('parent-auth-uuid').value='';
+ });
+
+ parentRows.addEventListener('click',e=>{
+  const edit=e.target.closest('[data-parent-edit]');const link=e.target.closest('[data-parent-link]');
+  if(edit){const p=parentCache.find(x=>String(x.id)===edit.dataset.parentEdit);if(!p)return;byId('parent-id').value=p.id;byId('pa-name').value=p.full_name||'';byId('pa-email').value=p.email||'';byId('pa-phone').value=p.phone||'';byId('pa-alt-phone').value=p.alternative_phone||'';byId('pa-address').value=p.address||'';byId('parent-save').textContent='Save parent changes';parentNotice('Editing '+p.full_name+'. Update the fields and save.');parentForm.scrollIntoView({behavior:'smooth',block:'start'});}
+  if(link){const p=parentCache.find(x=>String(x.id)===link.dataset.parentLink);if(!p)return;byId('link-parent').value=p.id;byId('link-student').focus();parentNotice('Select the child to link to '+p.full_name+'.');byId('parent-link-form').scrollIntoView({behavior:'smooth',block:'center'});}
+ });
+
+
+ // Exams & Results administrator interface — requires the companion SQL migration.
+ const examPanel=byId('exam-management'), examMsg=byId('exam-message'); let examCache=[], selectedAssessment=null, examClasses=[];
+ function examNotice(t,err=false){examMsg.textContent=t;examMsg.className='exam-message'+(err?' error':'');examMsg.style.display='block';}
+ function hideExamNotice(){examMsg.style.display='none';}
+ async function loadExamSetup(){
+  const [cl,sub]=await Promise.all([sb.from('school_classes').select('id,class_name').order('class_name'),sb.rpc('admin_list_school_subjects_v1')]);
+  if(cl.error){examNotice('Classes could not load: '+cl.error.message,true);return false;} examClasses=cl.data||[];
+  byId('assessment-class').innerHTML='<option value="">Select class</option>'+examClasses.map(c=>`<option value="${esc(c.id)}">${esc(c.class_name)}</option>`).join('');
+  if(sub.error){examNotice('Subjects could not load. Run the Exams & Results SQL setup first: '+sub.error.message,true);return false;}
+  const subjects=Array.isArray(sub.data)?sub.data:[];
+  byId('assessment-subject').innerHTML='<option value="">Select subject</option>'+subjects.map(x=>`<option value="${esc(x.id)}">${esc(x.subject_name)}</option>`).join('');
+  byId('subject-list').textContent=subjects.length?'Available subjects: '+subjects.map(x=>x.subject_name).join(', '):'No subjects added yet.';
+  return true;
+ }
+ async function loadAssessments(){
+  const body=byId('assessment-rows');body.innerHTML='<tr><td colspan="7">Loading assessments…</td></tr>';
+  const {data,error}=await sb.rpc('admin_list_assessments_v1'); if(error){body.innerHTML='<tr><td colspan="7">Could not load assessments.</td></tr>';examNotice('Assessment list failed: '+error.message,true);return;}
+  examCache=Array.isArray(data)?data:[]; if(!examCache.length){body.innerHTML='<tr><td colspan="7">No assessments created yet.</td></tr>';return;}
+  body.innerHTML=examCache.map(a=>`<tr><td>${esc(a.assessment_name)}</td><td>${esc(a.academic_session)}<br>${esc(a.term)}</td><td>${esc(a.class_name)}</td><td>${esc(a.subject_name)}</td><td>${esc(a.submitted_count)}/${esc(a.student_count??a.score_count)}</td><td>${esc(a.status)}</td><td><button type="button" class="secondary" data-review-assessment="${esc(a.id)}">Review scores</button></td></tr>`).join('');
+ }
+ async function openExams(){examPanel.style.display='block';examPanel.scrollIntoView({behavior:'smooth',block:'start'});hideExamNotice();if(await loadExamSetup())await loadAssessments();}
+ byId('open-exams').addEventListener('click',openExams);byId('close-exams').addEventListener('click',()=>examPanel.style.display='none');byId('assessment-refresh').addEventListener('click',loadAssessments);
+ byId('subject-form').addEventListener('submit',async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;const {data,error}=await sb.rpc('admin_upsert_school_subject_v1',{p_subject_name:byId('subject-name').value.trim(),p_subject_code:byId('subject-code').value.trim()||null});b.disabled=false;if(error){examNotice('Subject save failed: '+error.message,true);return;}byId('subject-form').reset();examNotice(data?.message||'Subject saved.');await loadExamSetup();});
+ byId('assessment-form').addEventListener('submit',async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;const ca=Number(byId('assessment-ca').value),ex=Number(byId('assessment-exam').value);if(ca+ex!==100){b.disabled=false;examNotice('CA and exam maximums must add up to 100.',true);return;}const {data,error}=await sb.rpc('admin_create_assessment_v1',{p_assessment_name:byId('assessment-name').value.trim(),p_academic_session:byId('assessment-session').value.trim(),p_term:byId('assessment-term').value,p_class_id:Number(byId('assessment-class').value),p_subject_id:Number(byId('assessment-subject').value),p_ca_max:ca,p_exam_max:ex});b.disabled=false;if(error){examNotice('Assessment creation failed: '+error.message,true);return;}examNotice(data?.message||'Assessment created.');await loadAssessments();});
+ byId('assessment-rows').addEventListener('click',async e=>{const b=e.target.closest('[data-review-assessment]');if(!b)return;selectedAssessment=Number(b.dataset.reviewAssessment);const a=examCache.find(x=>Number(x.id)===selectedAssessment);byId('score-review-title').textContent='Review: '+a.assessment_name+' · '+a.class_name+' · '+a.subject_name;const {data,error}=await sb.rpc('admin_get_assessment_scores_v1',{p_assessment_id:selectedAssessment});if(error){examNotice('Scores could not load: '+error.message,true);return;}const rows=Array.isArray(data)?data:[];byId('score-review-rows').innerHTML=rows.map(x=>`<tr><td>${esc(x.registration_number)}<br>${esc(x.student_name)}</td><td>${esc(x.ca_score)}</td><td>${esc(x.exam_score)}</td><td>${esc(x.total)}</td><td>${esc(x.grade)}</td><td>${esc(x.score_status)}</td></tr>`).join('')||'<tr><td colspan="6">No student records found for this class.</td></tr>';byId('score-review').style.display='block';byId('score-review').scrollIntoView({behavior:'smooth',block:'start'});});
+ async function reviewDecision(decision){if(!selectedAssessment){examNotice('Select an assessment first.',true);return;}const btn=byId(decision==='returned'?'return-assessment':decision==='approved'?'approve-assessment':'publish-assessment');btn.disabled=true;const {data,error}=await sb.rpc('admin_review_assessment_v1',{p_assessment_id:selectedAssessment,p_decision:decision,p_admin_comment:byId('admin-review-comment').value.trim()||null});btn.disabled=false;if(error){examNotice('Review action failed: '+error.message,true);return;}examNotice(data?.message||'Review action completed.');await loadAssessments();}
+ byId('return-assessment').addEventListener('click',()=>reviewDecision('returned'));byId('approve-assessment').addEventListener('click',()=>reviewDecision('approved'));byId('publish-assessment').addEventListener('click',()=>reviewDecision('published'));
+
+
+ // Attendance & Welfare — administrator first release
+ const attendancePanel=byId('attendance-panel');
+ const attendanceMsg=byId('attendance-message');
+ let attendanceRoster=[];
+ function attendanceNotice(message,isError=false){
+   attendanceMsg.textContent=message;
+   attendanceMsg.className='attendance-message'+(isError?' error':'');
+   attendanceMsg.style.display='block';
+ }
+ async function openAttendance(){
+   attendancePanel.style.display='block';
+   attendancePanel.scrollIntoView({behavior:'smooth',block:'start'});
+   const sel=byId('attendance-class');
+   sel.innerHTML='<option value="">Loading classes…</option>';
+   const {data,error}=await sb.from('school_classes').select('id,class_name').order('class_name');
+   if(error){attendanceNotice('Could not load classes: '+error.message,true);sel.innerHTML='<option value="">Classes unavailable</option>';return;}
+   sel.innerHTML='<option value="">Select class</option>'+(data||[]).map(c=>'<option value="'+esc(c.id)+'">'+esc(c.class_name)+'</option>').join('');
+   const d=new Date();const localDate=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+   byId('attendance-date').value=localDate;
+   attendanceNotice('Choose a class and load its register.');
+ }
+ async function loadAttendanceRoster(){
+   const classId=Number(byId('attendance-class').value);
+   const date=byId('attendance-date').value;
+   if(!classId||!date){attendanceNotice('Select both a class and date.',true);return;}
+   const body=byId('attendance-rows');
+   body.innerHTML='<tr><td colspan="4">Loading students…</td></tr>';
+   byId('save-attendance').disabled=true;
+   const {data,error}=await sb.rpc('admin_get_attendance_roster_v1',{p_class_id:classId,p_attendance_date:date});
+   if(error){body.innerHTML='<tr><td colspan="4">Could not load register.</td></tr>';attendanceNotice('Register could not load: '+error.message,true);return;}
+   attendanceRoster=Array.isArray(data)?data:[];
+   if(!attendanceRoster.length){body.innerHTML='<tr><td colspan="4">No active students are registered in this class.</td></tr>';attendanceNotice('No active students found for this class and date.');return;}
+   body.innerHTML=attendanceRoster.map((r,i)=>`<tr data-attendance-row="${i}">
+    <td>${esc(r.registration_number)}</td><td>${esc(r.student_name)}</td>
+    <td><select class="attendance-status" aria-label="Attendance status for ${esc(r.student_name)}">
+      <option value="present" ${r.attendance_status==='present'?'selected':''}>Present</option>
+      <option value="absent" ${r.attendance_status==='absent'?'selected':''}>Absent</option>
+      <option value="late" ${r.attendance_status==='late'?'selected':''}>Late</option>
+      <option value="excused" ${r.attendance_status==='excused'?'selected':''}>Excused</option>
+    </select></td>
+    <td><input class="attendance-note" type="text" maxlength="250" placeholder="Optional note" value="${esc(r.note||'')}"></td>
+   </tr>`).join('');
+   byId('save-attendance').disabled=false;
+   attendanceNotice(attendanceRoster.length+' active student(s) loaded. Review each status, then save.');
+ }
+ async function saveAttendance(){
+   if(!attendanceRoster.length){attendanceNotice('Load a class register first.',true);return;}
+   const classId=Number(byId('attendance-class').value),date=byId('attendance-date').value;
+   const records=[...byId('attendance-rows').querySelectorAll('tr[data-attendance-row]')].map(tr=>{
+     const i=Number(tr.dataset.attendanceRow);
+     return {student_id:attendanceRoster[i].student_id,attendance_status:tr.querySelector('.attendance-status').value,note:tr.querySelector('.attendance-note').value.trim()};
+   });
+   const btn=byId('save-attendance');btn.disabled=true;
+   const {data,error}=await sb.rpc('admin_save_attendance_v1',{p_class_id:classId,p_attendance_date:date,p_records:records});
+   btn.disabled=false;
+   if(error){attendanceNotice('Attendance was not saved: '+error.message,true);return;}
+   attendanceNotice(data?.message||'Attendance saved successfully.');
+   await loadAnalytics();
+ }
+ byId('open-attendance').addEventListener('click',openAttendance);
+ byId('close-attendance').addEventListener('click',()=>attendancePanel.style.display='none');
+ byId('load-attendance').addEventListener('click',loadAttendanceRoster);
+ byId('save-attendance').addEventListener('click',saveAttendance);
+
+
+
+ // Classes & Subjects: administrator-only class/subject assignment manager.
+ const csPanel=byId('classes-subjects-panel'); let csData={classes:[],subjects:[],assignments:[]};
+ function csNotice(t,bad=false){const el=byId('classes-subjects-message');el.textContent=t;el.style.display='block';el.classList.toggle('error',bad);}
+ async function loadClassSubjects(){
+  byId('cs-assignments').textContent='Loading assignments…';
+  const {data,error}=await sb.rpc('admin_get_class_subject_data_v1');
+  if(error){byId('cs-assignments').textContent='Could not load class and subject data: '+error.message;csNotice('Classes & Subjects setup error: '+error.message,true);return;}
+  csData=data||{classes:[],subjects:[],assignments:[]};
+  byId('cs-class').innerHTML=(csData.classes||[]).map(c=>`<option value="${esc(c.id)}">${esc(c.class_name)}</option>`).join('')||'<option value="">No classes found</option>';
+  byId('cs-subject').innerHTML=(csData.subjects||[]).map(x=>`<option value="${esc(x.id)}">${esc(x.subject_name)}</option>`).join('')||'<option value="">No subjects found</option>';
+  byId('cs-counts').textContent=`${csData.classes.length} classes · ${csData.subjects.length} subjects · ${csData.assignments.length} assignments`;
+  byId('cs-assignments').innerHTML=csData.assignments.length?`<table class="exam-table"><thead><tr><th>Class</th><th>Subject</th><th>Action</th></tr></thead><tbody>${csData.assignments.map(a=>`<tr><td>${esc(a.class_name)}</td><td>${esc(a.subject_name)}</td><td><button type="button" class="secondary" data-cs-remove="${esc(a.class_id)}" data-subject-id="${esc(a.subject_id)}">Remove</button></td></tr>`).join('')}</tbody></table>`:'No class-subject assignments yet.';
+ }
+ byId('open-classes-subjects').addEventListener('click',()=>{csPanel.style.display='block';loadClassSubjects();csPanel.scrollIntoView({behavior:'smooth',block:'start'});});
+ byId('close-classes-subjects').addEventListener('click',()=>csPanel.style.display='none');
+ byId('cs-refresh').addEventListener('click',loadClassSubjects);
+ byId('cs-assign').addEventListener('click',async()=>{const c=byId('cs-class').value,s=byId('cs-subject').value;if(!c||!s){csNotice('Select a class and a subject first.',true);return;}const b=byId('cs-assign');b.disabled=true;const {data,error}=await sb.rpc('admin_assign_class_subject_v1',{p_class_id:Number(c),p_subject_id:Number(s)});b.disabled=false;if(error){csNotice('Assignment failed: '+error.message,true);return;}csNotice(data?.message||'Subject assigned to class.');await loadClassSubjects();});
+ byId('cs-assignments').addEventListener('click',async e=>{const b=e.target.closest('[data-cs-remove]');if(!b)return;if(!confirm('Remove this subject from the selected class?'))return;b.disabled=true;const {data,error}=await sb.rpc('admin_remove_class_subject_v1',{p_class_id:Number(b.dataset.csRemove),p_subject_id:Number(b.dataset.subjectId)});if(error){b.disabled=false;csNotice('Could not remove assignment: '+error.message,true);return;}csNotice(data?.message||'Assignment removed.');await loadClassSubjects();});
+
+ // Performance Analysis: administrator-only snapshot reader.
+ const performancePanel=byId('performance-panel');
+ function performanceNotice(t,bad=false){const el=byId('performance-message');el.textContent=t;el.style.display='block';el.classList.toggle('error',bad)}
+ async function loadPerformanceAnalysis(){
+   const body=byId('performance-rows'), summary=byId('performance-summary');
+   body.innerHTML='<tr><td colspan="7">Loading saved performance metrics…</td></tr>';
+   const {data,error}=await sb.rpc('admin_get_performance_analysis_v1');
+   if(error){body.innerHTML='<tr><td colspan="7">Could not load performance analysis: '+esc(error.message)+'</td></tr>';summary.innerHTML='';performanceNotice('Performance analysis setup required. Apply the supplied performance SQL setup, then refresh.',true);return;}
+   const rows=Array.isArray(data)?data:[];
+   const ranked=rows.filter(x=>x.ranking_position!==null&&x.ranking_position!==undefined);
+   summary.innerHTML=[['Saved metrics',rows.length],['Ranked records',ranked.length],['Distinct metric types',new Set(rows.map(x=>x.metric_name)).size]].map(([k,v])=>`<article class="tile"><h3>${esc(k)}</h3><p style="font-size:24px;font-weight:700">${esc(v)}</p></article>`).join('');
+   body.innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.metric_name||'—')}</td><td>${esc(x.metric_value??'—')}</td><td>${esc(x.ranking_position??'—')}</td><td>${esc(x.academic_term_id||'—')}</td><td>${esc(x.class_id||'—')}</td><td>${esc(x.subject_id||'—')}</td><td>${esc(x.calculated_at||'—')}</td></tr>`).join(''):'<tr><td colspan="7">No performance snapshots have been saved yet. Once the school records metrics, they will appear here.</td></tr>';
+   performanceNotice(rows.length+' saved performance record(s) loaded.');
+ }
+ byId('open-performance').addEventListener('click',()=>{performancePanel.style.display='block';performancePanel.scrollIntoView({behavior:'smooth'});loadPerformanceAnalysis();});
+ byId('close-performance').addEventListener('click',()=>performancePanel.style.display='none');
+ byId('refresh-performance').addEventListener('click',loadPerformanceAnalysis);
+
+ // Batches 9-11: report cards, announcements, access codes and school settings.
+ const bpanel=byId('batch9-11-panel'), bmsg=byId('batch9-message');
+ function bnotice(t,bad=false){bmsg.textContent=t;bmsg.style.display='block';bmsg.classList.toggle('error',bad)}
+ async function openBatch9(section){bpanel.style.display='block';bpanel.scrollIntoView({behavior:'smooth'});const {data,error}=await sb.from('school_classes').select('id,class_name').order('class_name');if(error){bnotice('Class list failed: '+error.message,true);return;}const opts='<option value="">Select class</option>'+(data||[]).map(c=>`<option value="${esc(c.id)}">${esc(c.class_name)}</option>`).join('');byId('codes-class').innerHTML=opts;byId('reports-class').innerHTML=opts;if(section==='news')byId('ann-title').focus();if(section==='reports')byId('reports-session').focus();if(section==='settings')byId('setting-session').focus();await loadAnnouncements();await loadSchoolMessages();}
+ async function loadAnnouncements(){const {data,error}=await sb.rpc('admin_list_announcements_v1');if(error){byId('ann-list').textContent='Announcements setup required: '+error.message;return;}const rows=Array.isArray(data)?data:[];byId('ann-list').innerHTML='<table class="exam-table"><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Action</th></tr></thead><tbody>'+rows.map(a=>`<tr><td>${esc(a.title)}</td><td>${esc(a.audience)}</td><td>${a.published?'Published':'Draft'}</td><td><button type="button" class="secondary" data-ann-toggle="${a.id}" data-published="${a.published}">${a.published?'Unpublish':'Publish'}</button></td></tr>`).join('')+'</tbody></table>';}
+ byId('open-batch9').addEventListener('click',()=>openBatch9('all'));['open-batch9-news','open-batch9-reports','open-batch9-settings','open-batch9-messages'].forEach((id,i)=>byId(id).addEventListener('click',()=>openBatch9(['news','reports','settings','messages'][i])));byId('close-batch9').addEventListener('click',()=>bpanel.style.display='none');
+ byId('announcement-form').addEventListener('submit',async e=>{e.preventDefault();const {data,error}=await sb.rpc('admin_save_announcement_v1',{p_title:byId('ann-title').value.trim(),p_message:byId('ann-message').value.trim(),p_audience:byId('ann-audience').value,p_published:true});if(error){bnotice('Publish failed: '+error.message,true);return;}bnotice(data?.message||'Announcement published.');byId('announcement-form').reset();await loadAnnouncements();});
+ byId('ann-list').addEventListener('click',async e=>{const b=e.target.closest('[data-ann-toggle]');if(!b)return;const {error}=await sb.rpc('admin_set_announcement_published_v1',{p_id:Number(b.dataset.annToggle),p_published:b.dataset.published!=='true'});if(error){bnotice(error.message,true);return;}await loadAnnouncements();});
+
+ async function loadSchoolMessages(){const box=byId('school-messages-inbox');box.textContent='Loading messages…';const {data,error}=await sb.rpc('admin_list_school_messages_v1');if(error){box.textContent='Message inbox setup required: '+error.message;return;}const rows=Array.isArray(data)?data:[];box.innerHTML=rows.length?rows.map(m=>`<article style="border:1px solid #dce9df;border-radius:10px;padding:12px;margin:10px 0"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${esc(m.subject)}</b><span>${esc(m.status)}</span></div><p>${esc(m.parent_name)} · ${esc(m.parent_phone||m.parent_email||'No contact')} · ${esc(m.created_at||'')}</p><p>${esc(m.message)}</p>${m.admin_reply?`<p><b>Previous reply:</b> ${esc(m.admin_reply)}</p>`:''}<form data-message-reply="${m.id}"><label>Reply<textarea name="reply" required maxlength="5000" rows="2" style="width:100%;padding:10px;border:1px solid #b9cbbd;border-radius:8px">${esc(m.admin_reply||'')}</textarea></label><label style="display:inline-flex;align-items:center;gap:6px"><input type="checkbox" name="closed" style="width:auto"> Close conversation</label><button type="submit">Save reply</button></form></article>`).join(''):'No parent messages yet.';}
+ byId('refresh-school-messages').addEventListener('click',loadSchoolMessages);
+ byId('school-messages-inbox').addEventListener('submit',async e=>{const form=e.target.closest('form[data-message-reply]');if(!form)return;e.preventDefault();const reply=form.elements.reply.value.trim(),closed=form.elements.closed.checked;const {data,error}=await sb.rpc('admin_reply_school_message_v1',{p_message_id:Number(form.dataset.messageReply),p_reply:reply,p_closed:closed});if(error){bnotice('Reply failed: '+error.message,true);return;}bnotice(data?.message||'Reply saved.');await loadSchoolMessages();});
+
+ byId('codes-form').addEventListener('submit',async e=>{e.preventDefault();const {data,error}=await sb.rpc('admin_generate_result_codes_v1',{p_session:byId('codes-session').value.trim(),p_term:byId('codes-term').value,p_class_id:Number(byId('codes-class').value)});if(error){bnotice('Code generation failed: '+error.message,true);return;}const rows=data?.codes||[];byId('codes-output').innerHTML=`<p>${esc(data.generated)} access code(s) generated. Save or print now; codes are shown only once.</p><div class="exam-table-wrap"><table class="exam-table"><thead><tr><th>Admission No.</th><th>Student</th><th>Access code</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.registration_number)}</td><td>${esc(x.student_name)}</td><td><b>${esc(x.access_code)}</b></td></tr>`).join('')}</tbody></table></div><button type="button" onclick="window.print()">Print codes</button>`;bnotice(data?.warning||'Codes generated.');});
+ byId('reports-form').addEventListener('submit',async e=>{e.preventDefault();const {data,error}=await sb.rpc('admin_get_published_report_cards_v1',{p_session:byId('reports-session').value.trim(),p_term:byId('reports-term').value,p_class_id:Number(byId('reports-class').value)});if(error){bnotice('Report cards could not load: '+error.message,true);return;}const rows=Array.isArray(data)?data:[];byId('reports-output').innerHTML=rows.map(r=>`<article style="border:1px solid #ccd8ce;padding:14px;margin:12px 0"><h3>DEBBY ACADEMY — STUDENT REPORT</h3><p>${esc(r.student_name)} · ${esc(r.registration_number)} · ${esc(r.class_name)}</p><p>${esc(byId('reports-session').value)} · ${esc(byId('reports-term').value)}</p><table class="exam-table"><thead><tr><th>Subject</th><th>CA</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>${(r.subjects||[]).map(x=>`<tr><td>${esc(x.subject)}</td><td>${esc(x.ca)}</td><td>${esc(x.exam)}</td><td>${esc(x.total)}</td><td>${esc(x.grade)}</td></tr>`).join('')}</tbody></table><p>Class teacher: ${esc(r.comments?.class_teacher_comment||'—')}</p><p>Head teacher: ${esc(r.comments?.head_teacher_comment||'—')}</p><button type="button" onclick="window.print()">Print report</button></article>`).join('')||'<p>No published results found for this class/session/term.</p>';bnotice(rows.length+' published report card(s) loaded.');});
+ byId('settings-form').addEventListener('submit',async e=>{e.preventDefault();const payload={academic_session:byId('setting-session').value.trim(),current_term:byId('setting-term').value,school_name:'DEBBY ACADEMY',motto:'Excellence in Christ',phone:'07032295813',email:'ajiwebudeborah@gmail.com'};const {data,error}=await sb.rpc('admin_save_school_setting_v1',{p_key:'academic',p_value:payload});if(error){bnotice('Settings save failed: '+error.message,true);return;}bnotice(data?.message||'Academic settings saved.');});
+
+})();
+</script>
+</body></html>
