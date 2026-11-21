@@ -1,35 +1,477 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#176b3a"><title>DEBBY ACADEMY — Parent Portal</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b3a">
+<title>DEBBY ACADEMY — Parent Portal</title>
+
 <style>
-:root{--g:#176b3a;--d:#104b2a;--p:#edf7ef;--ink:#183124;--muted:#627368;--line:#dce9df}*{box-sizing:border-box}body{margin:0;background:#f3f7f3;color:var(--ink);font-family:Arial,sans-serif}header{background:var(--g);color:#fff;padding:16px}header .wrap{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}main{max-width:1050px;margin:22px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin:14px 0}h1{color:var(--d);font-size:23px;margin:0 0 8px}h2{font-size:18px;color:var(--d)}.muted{color:var(--muted);line-height:1.5}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,select{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px}button{border:0;border-radius:8px;background:var(--g);color:#fff;font-weight:700;padding:11px 14px;margin:6px 4px 4px 0;cursor:pointer}button.alt{background:#e8f2ea;color:var(--d)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.msg{padding:10px;background:var(--p);border-radius:8px;margin:10px 0;white-space:pre-wrap}.error{background:#fff0ef;color:#922b25}.hidden{display:none}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:560px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:var(--p)}.result-head{border-bottom:2px solid var(--g);padding-bottom:10px;margin-bottom:12px}.subject{font-size:14px}@media(max-width:600px){.grid{grid-template-columns:1fr}}
-@media print{header,#login,#portal-tools,.no-print{display:none!important}body{background:white}.card{border:0;box-shadow:none;margin:0;padding:0}.result-print{display:block!important}}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
-<body><header><div class="wrap"><div><b>DEBBY ACADEMY</b><div style="font-size:12px;margin-top:4px">PARENT & GUARDIAN PORTAL · Excellence in Christ</div></div><button id="signout" class="alt hidden">Sign out</button></div></header>
+:root{--g:#176b3a;--d:#104b2a;--p:#edf7ef;--ink:#183124;--muted:#627368;--line:#dce9df}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f7f3;color:var(--ink);font-family:Arial,sans-serif}
+header{background:var(--g);color:#fff;padding:16px}
+header .wrap{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+main{max-width:1050px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin:14px 0}
+h1{color:var(--d);font-size:23px;margin:0 0 8px}
+h2{font-size:18px;color:var(--d)}
+.muted{color:var(--muted);line-height:1.5}
+label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}
+input,select{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px}
+button{border:0;border-radius:8px;background:var(--g);color:#fff;font-weight:700;padding:11px 14px;margin:6px 4px 4px 0;cursor:pointer}
+button.alt{background:#e8f2ea;color:var(--d)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.msg{padding:10px;background:var(--p);border-radius:8px;margin:10px 0;white-space:pre-wrap}
+.error{background:#fff0ef;color:#922b25}
+.hidden{display:none}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+th{background:var(--p)}
+.result-head{border-bottom:2px solid var(--g);padding-bottom:10px;margin-bottom:12px}
+.subject{font-size:14px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+@media print{
+header,#login,#portal-tools,.no-print{display:none!important}
+body{background:white}
+.card{border:0;box-shadow:none;margin:0;padding:0}
+.result-print{display:block!important}
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<header>
+<div class="wrap">
+<div>
+<b>DEBBY ACADEMY</b>
+<div style="font-size:12px;margin-top:4px">PARENT & GUARDIAN PORTAL · Excellence in Christ</div>
+</div>
+<button id="signout" class="alt hidden">Sign out</button>
+</div>
+</header>
+
 <main>
-<section id="login" class="card"><h1>Parent / Guardian Sign in</h1><p class="muted">Use the email and password provided for your school parent account. If your account has not been activated, contact the school administrator.</p><form id="loginform"><label>Email address</label><input id="email" type="email" required autocomplete="username"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><button type="submit">Sign in</button></form><div id="loginmsg" class="msg" aria-live="polite"></div></section>
-<section id="portal" class="hidden"><div class="card"><h1>Parent Dashboard</h1><div id="identity" class="muted"></div><div id="portalmsg" class="msg hidden" aria-live="polite"></div></div>
+
+<section id="login" class="card">
+<h1>Parent / Guardian Sign in</h1>
+<p class="muted">Use the email and password provided for your school parent account. If your account has not been activated, contact the school administrator.</p>
+
+<form id="loginform">
+<label>Email address</label>
+<input id="email" type="email" required autocomplete="username">
+
+<label>Password</label>
+<input id="password" type="password" required autocomplete="current-password">
+
+<button type="submit">Sign in</button>
+</form>
+
+<div id="loginmsg" class="msg" aria-live="polite"></div>
+</section>
+
+<section id="portal" class="hidden">
+
+<div class="card">
+<h1>Parent Dashboard</h1>
+<div id="identity" class="muted"></div>
+<div id="portalmsg" class="msg hidden" aria-live="polite"></div>
+</div>
+
 <div id="portal-tools">
-<div class="card"><h2>My Children</h2><p class="muted">Only students linked to your parent account are shown.</p><button id="refresh" class="alt">Refresh children</button><div id="children" class="msg">Loading linked children…</div></div>
-<div class="card"><h2>Check Published Result</h2><p class="muted">Choose your child, enter the academic session and the eight-digit access code supplied by the school.</p><form id="resultform"><label>Child</label><select id="student" required><option value="">Select linked child</option></select><div class="grid"><div><label>Academic session</label><input id="session" placeholder="2026/2027" required></div><div><label>Term</label><select id="term"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></div></div><label>Eight-digit result access code</label><input id="code" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" minlength="8" required placeholder="00000000"><button type="submit">View result</button></form><div id="resultmsg" class="msg hidden"></div><div id="result" class="card hidden result-print"></div></div>
-<div class="card"><h2>School Announcements</h2><button id="annrefresh" class="alt">Refresh announcements</button><div id="announcements" class="muted">Loading announcements…</div></div>
-<div class="card"><h2>Message the School</h2><p class="muted">Send a private message to the school office and view replies here. This is an in-portal inbox, not SMS or WhatsApp delivery.</p><form id="messageform"><label>Related child (optional)</label><select id="message-student"><option value="">General enquiry</option></select><label>Subject</label><input id="message-subject" maxlength="160" required><label>Message</label><textarea id="message-body" maxlength="5000" rows="4" required style="width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font:inherit"></textarea><button type="submit">Send to school</button></form><div id="messagemsg" class="msg hidden"></div><h3>My Messages &amp; Replies</h3><button id="msgrefresh" class="alt">Refresh messages</button><div id="messages" class="muted">Loading messages…</div></div>
-</div></section>
+
+<div class="card">
+<h2>My Children</h2>
+<p class="muted">Only students linked to your parent account are shown.</p>
+<button id="refresh" class="alt">Refresh children</button>
+<div id="children" class="msg">Loading linked children…</div>
+</div>
+
+<div class="card">
+<h2>Check Published Result</h2>
+<p class="muted">Choose your child, enter the academic session and the eight-digit access code supplied by the school.</p>
+
+<form id="resultform">
+
+<label>Child</label>
+<select id="student" required>
+<option value="">Select linked child</option>
+</select>
+
+<div class="grid">
+<div>
+<label>Academic session</label>
+<input id="session" placeholder="2026/2027" required>
+</div>
+
+<div>
+<label>Term</label>
+<select id="term">
+<option>First Term</option>
+<option>Second Term</option>
+<option>Third Term</option>
+</select>
+</div>
+</div>
+
+<label>Eight-digit result access code</label>
+<input id="code" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" minlength="8" required placeholder="00000000">
+
+<button type="submit">View result</button>
+</form>
+
+<div id="resultmsg" class="msg hidden"></div>
+<div id="result" class="card hidden result-print"></div>
+</div>
+
+<div class="card">
+<h2>School Announcements</h2>
+<button id="annrefresh" class="alt">Refresh announcements</button>
+<div id="announcements" class="muted">Loading announcements…</div>
+</div>
+
+<div class="card">
+<h2>Message the School</h2>
+<p class="muted">Send a private message to the school office and view replies here. This is an in-portal inbox, not SMS or WhatsApp delivery.</p>
+
+<form id="messageform">
+<label>Related child (optional)</label>
+<select id="message-student">
+<option value="">General enquiry</option>
+</select>
+
+<label>Subject</label>
+<input id="message-subject" maxlength="160" required>
+
+<label>Message</label>
+<textarea id="message-body" maxlength="5000" rows="4" required style="width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font:inherit"></textarea>
+
+<button type="submit">Send to school</button>
+</form>
+
+<div id="messagemsg" class="msg hidden"></div>
+<h3>My Messages &amp; Replies</h3>
+<button id="msgrefresh" class="alt">Refresh messages</button>
+<div id="messages" class="muted">Loading messages…</div>
+</div>
+
+</div>
+</section>
+
 </main>
+
 <script>
+
 const SUPABASE_URL='https://tjanijrtknykskexawpc.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_x8pHV4exEwWrQJwWkbP4VQ_wz9GzKhl';
+
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function msg(id,t,isErr=false){$(id).textContent=t;$(id).classList.remove('hidden','error');if(isErr)$(id).classList.add('error')}
-function resultHtml(r){const s=r.student||{};const rows=Array.isArray(r.subjects)?r.subjects:[];const c=r.comments||{};return `<div class="result-head"><h2>DEBBY ACADEMY — REPORT CARD</h2><div><b>${esc(s.student_name)}</b><br>${esc(s.registration_number)} · ${esc(s.class_name)}<br>${esc(r.academic_session)} · ${esc(r.term)}</div></div><div class="tablewrap"><table><thead><tr><th>Subject</th><th>Assessment</th><th>CA</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.subject)}</td><td>${esc(x.assessment)}</td><td>${esc(x.ca)}</td><td>${esc(x.exam)}</td><td><b>${esc(x.total)}</b></td><td>${esc(x.grade)}</td></tr>`).join('')}</tbody></table></div><p><b>Class Teacher's Comment:</b> ${esc(c.class_teacher_comment||'—')}</p><p><b>Head Teacher's Comment:</b> ${esc(c.head_teacher_comment||'—')}</p><p><b>Attendance:</b> ${esc(c.days_present??'—')} days present · ${esc(c.days_absent??'—')} days absent · ${esc(c.days_open??'—')} days open</p><button class="no-print" onclick="window.print()">Print / Save PDF</button>`}
-async function loadChildren(){const {data,error}=await sb.rpc('get_my_parent_children_v1');if(error){msg('children','Unable to load linked children: '+error.message,true);return}const rows=Array.isArray(data)?data:(Array.isArray(data?.children)?data.children:[]);$('children').innerHTML=rows.length?rows.map(x=>`<div style="padding:8px 0;border-bottom:1px solid #dce9df"><b>${esc(x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student')}</b><br><small>${esc(x.registration_number||'')} ${x.class_name?' · '+esc(x.class_name):''}</small></div>`).join(''):'No children are linked to this account yet.';$('student').innerHTML='<option value="">Select linked child</option>'+rows.map(x=>{const id=x.student_id??x.id;const name=x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student';return `<option value="${esc(id)}">${esc(name)} — ${esc(x.registration_number||'')}</option>`}).join('');$('message-student').innerHTML='<option value="">General enquiry</option>'+rows.map(x=>{const id=x.student_id??x.id;const name=x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student';return `<option value="${esc(id)}">${esc(name)}</option>`}).join('')}
-async function loadAnnouncements(){const {data,error}=await sb.rpc('parent_list_published_announcements_v1');if(error){$('announcements').textContent='Announcements are temporarily unavailable: '+error.message;return}const rows=Array.isArray(data)?data:[];$('announcements').innerHTML=rows.length?rows.map(a=>`<article style="padding:10px 0;border-bottom:1px solid #dce9df"><b>${esc(a.title||'School Announcement')}</b><p>${esc(a.message||'')}</p><small>${esc(a.publish_at||a.created_at||'')}</small></article>`).join(''):'There are no published announcements.'}
-async function loadMessages(){const {data,error}=await sb.rpc('parent_list_school_messages_v1');if(error){$('messages').textContent='Messages are temporarily unavailable: '+error.message;return}const rows=Array.isArray(data)?data:[];$('messages').innerHTML=rows.length?rows.map(m=>`<article style="padding:10px 0;border-bottom:1px solid #dce9df"><b>${esc(m.subject)}</b> · ${esc(m.status)}<p>${esc(m.message)}</p>${m.admin_reply?`<div class="msg"><b>School reply:</b><br>${esc(m.admin_reply)}</div>`:'<small>Awaiting school response</small>'}<small>${esc(m.created_at||'')}</small></article>`).join(''):'You have not sent any messages yet.'}
-async function enterPortal(){const {data:who,error}=await sb.rpc('parent_portal_identity_v1');if(error){await sb.auth.signOut();$('login').classList.remove('hidden');$('portal').classList.add('hidden');msg('loginmsg',error.message,true);return}$('identity').textContent='Welcome, '+(who.full_name||'Parent / Guardian')+' · '+(who.email||'');$('login').classList.add('hidden');$('portal').classList.remove('hidden');$('signout').classList.remove('hidden');await Promise.all([loadChildren(),loadAnnouncements(),loadMessages()])}
-$('loginform').addEventListener('submit',async e=>{e.preventDefault();msg('loginmsg','Signing in…');const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){msg('loginmsg',error.message,true);return}await enterPortal()});
-$('signout').onclick=async()=>{await sb.auth.signOut();$('portal').classList.add('hidden');$('login').classList.remove('hidden');$('signout').classList.add('hidden');$('password').value=''};
-$('refresh').onclick=loadChildren;$('annrefresh').onclick=loadAnnouncements;$('msgrefresh').onclick=loadMessages;
-$('messageform').addEventListener('submit',async e=>{e.preventDefault();msg('messagemsg','Sending message…');const sid=$('message-student').value;const {data,error}=await sb.rpc('parent_send_school_message_v1',{p_student_id:sid?Number(sid):null,p_subject:$('message-subject').value.trim(),p_message:$('message-body').value.trim()});if(error){msg('messagemsg',error.message,true);return}$('messageform').reset();msg('messagemsg',data?.message||'Message sent.');await loadMessages()});
-$('resultform').addEventListener('submit',async e=>{e.preventDefault();$('result').classList.add('hidden');msg('resultmsg','Checking the code and loading the published report…');const {data,error}=await sb.rpc('parent_get_published_report_card_v1',{p_student_id:Number($('student').value),p_session:$('session').value.trim(),p_term:$('term').value,p_access_code:$('code').value.trim()});if(error){msg('resultmsg',error.message,true);return}const r=typeof data==='string'?JSON.parse(data):data;$('result').innerHTML=resultHtml(r);$('result').classList.remove('hidden');$('resultmsg').classList.add('hidden')});
-sb.auth.getSession().then(({data})=>{if(data.session)enterPortal()});
-</script></body></html>
+
+const $=id=>document.getElementById(id);
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[c]));
+
+function msg(id,t,isErr=false){
+$(id).textContent=t;
+$(id).classList.remove('hidden','error');
+if(isErr)$(id).classList.add('error');
+}
+
+function resultHtml(r){
+const s=r.student||{};
+const rows=Array.isArray(r.subjects)?r.subjects:[];
+const c=r.comments||{};
+
+return `
+<div class="result-head">
+<h2>DEBBY ACADEMY — REPORT CARD</h2>
+<div>
+<b>${esc(s.student_name)}</b><br>
+${esc(s.registration_number)} · ${esc(s.class_name)}<br>
+${esc(r.academic_session)} · ${esc(r.term)}
+</div>
+</div>
+
+<div class="tablewrap">
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Assessment</th>
+<th>CA</th>
+<th>Exam</th>
+<th>Total</th>
+<th>Grade</th>
+</tr>
+</thead>
+<tbody>
+${rows.map(x=>`
+<tr>
+<td>${esc(x.subject)}</td>
+<td>${esc(x.assessment)}</td>
+<td>${esc(x.ca)}</td>
+<td>${esc(x.exam)}</td>
+<td><b>${esc(x.total)}</b></td>
+<td>${esc(x.grade)}</td>
+</tr>
+`).join('')}
+</tbody>
+</table>
+</div>
+
+<p><b>Class Teacher's Comment:</b> ${esc(c.class_teacher_comment||'—')}</p>
+<p><b>Head Teacher's Comment:</b> ${esc(c.head_teacher_comment||'—')}</p>
+<p><b>Attendance:</b> ${esc(c.days_present??'—')} days present · ${esc(c.days_absent??'—')} days absent · ${esc(c.days_open??'—')} days open</p>
+
+<button class="no-print" onclick="window.print()">Print / Save PDF</button>
+`;
+}
+
+async function loadChildren(){
+
+const {data,error}=await sb.rpc('get_my_parent_children_v1');
+
+if(error){
+msg('children','Unable to load linked children: '+error.message,true);
+return;
+}
+
+const rows=Array.isArray(data)?data:(Array.isArray(data?.children)?data.children:[]);
+
+$('children').innerHTML=rows.length?
+rows.map(x=>`
+<div style="padding:8px 0;border-bottom:1px solid #dce9df">
+<b>${esc(x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student')}</b><br>
+<small>${esc(x.registration_number||'')} ${x.class_name?' · '+esc(x.class_name):''}</small>
+</div>
+`).join('')
+:'No children are linked to this account yet.';
+
+$('student').innerHTML='<option value="">Select linked child</option>'+rows.map(x=>{
+const id=x.student_id??x.id;
+const name=x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student';
+return `<option value="${esc(id)}">${esc(name)} — ${esc(x.registration_number||'')}</option>`;
+}).join('');
+
+$('message-student').innerHTML='<option value="">General enquiry</option>'+rows.map(x=>{
+const id=x.student_id??x.id;
+const name=x.student_name||[x.first_name,x.middle_name,x.last_name].filter(Boolean).join(' ')||x.full_name||'Student';
+return `<option value="${esc(id)}">${esc(name)}</option>`;
+}).join('');
+
+}
+
+async function loadAnnouncements(){
+
+const {data,error}=await sb.rpc('parent_list_published_announcements_v1');
+
+if(error){
+$('announcements').textContent='Announcements are temporarily unavailable: '+error.message;
+return;
+}
+
+const rows=Array.isArray(data)?data:[];
+
+$('announcements').innerHTML=rows.length?
+rows.map(a=>`
+<article style="padding:10px 0;border-bottom:1px solid #dce9df">
+<b>${esc(a.title||'School Announcement')}</b>
+<p>${esc(a.message||'')}</p>
+<small>${esc(a.publish_at||a.created_at||'')}</small>
+</article>
+`).join('')
+:'There are no published announcements.';
+
+}
+
+async function loadMessages(){
+
+const {data,error}=await sb.rpc('parent_list_school_messages_v1');
+
+if(error){
+$('messages').textContent='Messages are temporarily unavailable: '+error.message;
+return;
+}
+
+const rows=Array.isArray(data)?data:[];
+
+$('messages').innerHTML=rows.length?
+rows.map(m=>`
+<article style="padding:10px 0;border-bottom:1px solid #dce9df">
+<b>${esc(m.subject)}</b> · ${esc(m.status)}
+<p>${esc(m.message)}</p>
+${m.admin_reply?`
+<div class="msg">
+<b>School reply:</b><br>
+${esc(m.admin_reply)}
+</div>
+`:'<small>Awaiting school response</small>'}
+<small>${esc(m.created_at||'')}</small>
+</article>
+`).join('')
+:'You have not sent any messages yet.';
+
+}
+
+async function enterPortal(){
+
+const {data:who,error}=await sb.rpc('parent_portal_identity_v1');
+
+if(error){
+await sb.auth.signOut();
+$('login').classList.remove('hidden');
+$('portal').classList.add('hidden');
+msg('loginmsg',error.message,true);
+return;
+}
+
+$('identity').textContent='Welcome, '+(who.full_name||'Parent / Guardian')+' · '+(who.email||'');
+
+$('login').classList.add('hidden');
+$('portal').classList.remove('hidden');
+$('signout').classList.remove('hidden');
+
+await Promise.all([
+loadChildren(),
+loadAnnouncements(),
+loadMessages()
+]);
+
+}
+
+$('loginform').addEventListener('submit',async e=>{
+
+e.preventDefault();
+
+msg('loginmsg','Signing in…');
+
+const {error}=await sb.auth.signInWithPassword({
+email:$('email').value.trim(),
+password:$('password').value
+});
+
+if(error){
+msg('loginmsg',error.message,true);
+return;
+}
+
+await enterPortal();
+
+});
+
+$('signout').onclick=async()=>{
+
+await sb.auth.signOut();
+
+$('portal').classList.add('hidden');
+$('login').classList.remove('hidden');
+$('signout').classList.add('hidden');
+$('password').value='';
+
+};
+
+$('refresh').onclick=loadChildren;
+$('annrefresh').onclick=loadAnnouncements;
+$('msgrefresh').onclick=loadMessages;
+
+$('messageform').addEventListener('submit',async e=>{
+
+e.preventDefault();
+
+msg('messagemsg','Sending message…');
+
+const sid=$('message-student').value;
+
+const {data,error}=await sb.rpc('parent_send_school_message_v1',{
+p_student_id:sid?Number(sid):null,
+p_subject:$('message-subject').value.trim(),
+p_message:$('message-body').value.trim()
+});
+
+if(error){
+msg('messagemsg',error.message,true);
+return;
+}
+
+$('messageform').reset();
+
+msg('messagemsg',data?.message||'Message sent.');
+
+await loadMessages();
+
+});
+
+/* REPORT CARD VERIFICATION AND EMAIL */
+
+$('resultform').addEventListener('submit',async e=>{
+
+e.preventDefault();
+
+$('result').classList.add('hidden');
+
+msg('resultmsg','Verifying result and preparing report-card email...');
+
+try{
+
+const {data,error}=await sb.functions.invoke(
+'send-report-card-email-',
+{
+body:{
+student_id:Number($('student').value),
+session:$('session').value.trim(),
+term:$('term').value,
+access_code:$('code').value.trim()
+}
+}
+);
+
+if(error){
+msg('resultmsg',error.message,true);
+return;
+}
+
+if(data?.error){
+msg('resultmsg',data.error,true);
+return;
+}
+
+if(!data?.report){
+msg('resultmsg','The report card could not be loaded. Please contact the school.',true);
+return;
+}
+
+const r=data.report;
+
+$('result').innerHTML=resultHtml(r);
+
+$('result').classList.remove('hidden');
+
+msg('resultmsg',data.message||'Result verified.');
+
+}catch(error){
+
+msg('resultmsg','Unable to process the report card: '+error.message,true);
+
+}
+
+});
+
+sb.auth.getSession().then(({data})=>{
+
+if(data.session)enterPortal();
+
+});
+
+</script>
+</body>
+</html>
