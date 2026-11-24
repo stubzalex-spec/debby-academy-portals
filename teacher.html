@@ -1,23 +1,466 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#176b3a"><title>DEBBY ACADEMY — Teacher Portal</title><style>
-:root{--g:#176b3a;--d:#104b2a;--p:#edf7ef;--ink:#183124;--muted:#627368;--line:#dce9df}*{box-sizing:border-box}body{margin:0;background:#f3f7f3;color:var(--ink);font-family:Arial,sans-serif}header{background:var(--g);color:#fff;padding:16px}header .wrap{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}main{max-width:1050px;margin:22px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin:14px 0}h1{color:var(--d);font-size:23px;margin:0 0 8px}h2{font-size:18px;color:var(--d)}.muted{color:var(--muted);line-height:1.5}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px}button{border:0;border-radius:8px;background:var(--g);color:#fff;font-weight:700;padding:11px 14px;margin:6px 4px 4px 0}button.alt{background:#e8f2ea;color:var(--d)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:var(--p)}.msg{padding:10px;background:var(--p);border-radius:8px;margin:10px 0;white-space:pre-wrap}.hidden{display:none}@media(max-width:600px){.grid{grid-template-columns:1fr}}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header><div class="wrap"><div><b>DEBBY ACADEMY</b><div style="font-size:12px;margin-top:4px">NURSERY · PRIMARY · SECONDARY | Excellence in Christ</div></div><button id="signout" class="alt hidden">Sign out</button></div></header><main><section id="login" class="card"><h1>Teacher sign in</h1><p class="muted">Use the school email account activated by the administrator. Do not share your password.</p><form id="loginform"><label>Email</label><input id="email" type="email" required autocomplete="username"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><button>Sign in</button></form><div id="loginmsg" class="msg" aria-live="polite"></div></section><section id="portal" class="hidden"><div class="card"><h1>Teacher Dashboard</h1><div id="identity" class="muted"></div><div id="notice" class="msg hidden"></div></div><div class="card"><h2>My assigned assessments</h2><button class="alt" id="refresh">Refresh</button><div class="tablewrap"><table><thead><tr><th>Assessment</th><th>Session / Term</th><th>Class</th><th>Subject</th><th>Status</th><th>Action</th></tr></thead><tbody id="assessments"><tr><td colspan="6">Loading…</td></tr></tbody></table></div></div><div class="card hidden" id="scorecard"><h2 id="scoretitle">Enter scores</h2><p class="muted">Enter CA and examination marks within the maximum shown. Save drafts before submitting.</p><div class="tablewrap"><table><thead><tr><th>Student</th><th>CA / max</th><th>Exam / max</th><th>Teacher comment</th></tr></thead><tbody id="students"></tbody></table></div><button id="save">Save drafts</button><button id="submit">Submit to HOD</button></div></section><script>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b3a">
+<title>DEBBY ACADEMY — Teacher Portal</title>
 
+<style>
+:root{--g:#176b3a;--d:#104b2a;--p:#edf7ef;--ink:#183124;--muted:#627368;--line:#dce9df}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f7f3;color:var(--ink);font-family:Arial,sans-serif}
+header{background:var(--g);color:#fff;padding:16px}
+header .wrap{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+main{max-width:1050px;margin:22px auto;padding:0 14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin:14px 0}
+h1{color:var(--d);font-size:23px;margin:0 0 8px}
+h2{font-size:18px;color:var(--d)}
+.muted{color:var(--muted);line-height:1.5}
+label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #b9cbbd;border-radius:8px;font-size:15px}
+button{border:0;border-radius:8px;background:var(--g);color:#fff;font-weight:700;padding:11px 14px;margin:6px 4px 4px 0}
+button.alt{background:#e8f2ea;color:var(--d)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:950px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+th{background:var(--p)}
+.msg{padding:10px;background:var(--p);border-radius:8px;margin:10px 0;white-space:pre-wrap}
+.hidden{display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+<header>
+<div class="wrap">
+<div>
+<b>DEBBY ACADEMY</b>
+<div style="font-size:12px;margin-top:4px">NURSERY · PRIMARY · SECONDARY | Excellence in Christ</div>
+</div>
+<button id="signout" class="alt hidden">Sign out</button>
+</div>
+</header>
+
+<main>
+
+<section id="login" class="card">
+<h1>Teacher sign in</h1>
+<p class="muted">Use the school email account activated by the administrator. Do not share your password.</p>
+
+<form id="loginform">
+<label>Email</label>
+<input id="email" type="email" required autocomplete="username">
+
+<label>Password</label>
+<input id="password" type="password" required autocomplete="current-password">
+
+<button>Sign in</button>
+</form>
+
+<div id="loginmsg" class="msg" aria-live="polite"></div>
+</section>
+
+<section id="portal" class="hidden">
+
+<div class="card">
+<h1>Teacher Dashboard</h1>
+<div id="identity" class="muted"></div>
+<div id="notice" class="msg hidden"></div>
+</div>
+
+<div class="card">
+<h2>My assigned assessments</h2>
+<button class="alt" id="refresh">Refresh</button>
+
+<div class="tablewrap">
+<table>
+<thead>
+<tr>
+<th>Assessment</th>
+<th>Session / Term</th>
+<th>Class</th>
+<th>Subject</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="assessments">
+<tr><td colspan="6">Loading…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card hidden" id="scorecard">
+<h2 id="scoretitle">Enter scores</h2>
+<p class="muted">Enter each student's marks within the maximum shown. Save drafts before submitting.</p>
+
+<div class="tablewrap">
+<table>
+<thead>
+<tr>
+<th>Student</th>
+<th>First Test</th>
+<th>Second Test</th>
+<th>Third Test</th>
+<th>End-of-Term Examination</th>
+<th>Teacher Comment</th>
+</tr>
+</thead>
+<tbody id="students"></tbody>
+</table>
+</div>
+
+<button id="save">Save drafts</button>
+<button id="submit">Submit to HOD</button>
+</div>
+
+</section>
+
+<script>
 const SUPABASE_URL='https://tjanijrtknykskexawpc.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_x8pHV4exEwWrQJwWkbP4VQ_wz9GzKhl';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
+const sb=window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
 const $=id=>document.getElementById(id);
-const esc=v=>String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
-function loginMessage(t,isErr=false){$('loginmsg').textContent=t;$('loginmsg').classList.remove('hidden');$('loginmsg').style.background=isErr?'#fff0ef':'#edf7ef';$('loginmsg').style.color=isErr?'#922b25':'#183124';}
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[c]));
+
+function loginMessage(t,isErr=false){
+$('loginmsg').textContent=t;
+$('loginmsg').classList.remove('hidden');
+$('loginmsg').style.background=isErr?'#fff0ef':'#edf7ef';
+$('loginmsg').style.color=isErr?'#922b25':'#183124';
+}
+
 async function boot(){
-  $('loginform').addEventListener('submit',async e=>{e.preventDefault();loginMessage('Signing in…');const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){loginMessage(error.message,true);return;}await enterStaffPortal();});
-  $('signout').onclick=async()=>{await sb.auth.signOut();$('portal').classList.add('hidden');$('login').classList.remove('hidden');$('signout').classList.add('hidden');$('password').value='';};
-  const {data,error}=await sb.auth.getSession();if(error){loginMessage(error.message,true);return;}if(data.session)await enterStaffPortal();
+
+$('loginform').addEventListener('submit',async e=>{
+e.preventDefault();
+
+loginMessage('Signing in…');
+
+const {error}=await sb.auth.signInWithPassword({
+email:$('email').value.trim(),
+password:$('password').value
+});
+
+if(error){
+loginMessage(error.message,true);
+return;
 }
+
+await enterStaffPortal();
+});
+
+$('signout').onclick=async()=>{
+await sb.auth.signOut();
+$('portal').classList.add('hidden');
+$('login').classList.remove('hidden');
+$('signout').classList.add('hidden');
+$('password').value='';
+};
+
+const {data,error}=await sb.auth.getSession();
+
+if(error){
+loginMessage(error.message,true);
+return;
+}
+
+if(data.session)await enterStaffPortal();
+}
+
 async function enterStaffPortal(){
-  $('login').classList.add('hidden');$('portal').classList.remove('hidden');$('signout').classList.remove('hidden');
-  await loadPortal();
-  const identityText=$('identity').textContent||'';
-  if(identityText.toLowerCase().includes('permission denied')||identityText.toLowerCase().includes('not authorised')||identityText.toLowerCase().includes('not authorized')){await sb.auth.signOut();$('portal').classList.add('hidden');$('login').classList.remove('hidden');$('signout').classList.add('hidden');loginMessage(identityText,true);}
+
+$('login').classList.add('hidden');
+$('portal').classList.remove('hidden');
+$('signout').classList.remove('hidden');
+
+await loadPortal();
+
+const identityText=$('identity').textContent||'';
+
+if(
+identityText.toLowerCase().includes('permission denied')||
+identityText.toLowerCase().includes('not authorised')||
+identityText.toLowerCase().includes('not authorized')
+){
+await sb.auth.signOut();
+$('portal').classList.add('hidden');
+$('login').classList.remove('hidden');
+$('signout').classList.add('hidden');
+loginMessage(identityText,true);
 }
-let currentAssessment=null, currentRows=[];function notice(t){$('notice').textContent=t;$('notice').classList.remove('hidden')}async function loadPortal(){const {data:who,error}=await sb.rpc('staff_portal_identity_v1');if(error){notice(error.message);return}$('identity').textContent=`Welcome, ${who.full_name} · ${who.employee_number} · ${who.staff_role}`;await loadAssessments()}async function loadAssessments(){const {data,error}=await sb.rpc('staff_get_assessments_v1');if(error){notice(error.message);return}const rows=Array.isArray(data)?data:[];$('assessments').innerHTML=rows.map(a=>`<tr><td>${esc(a.assessment_name)}</td><td>${esc(a.academic_session)}<br>${esc(a.term)}</td><td>${esc(a.class_name)}</td><td>${esc(a.subject_name)}</td><td>${esc(a.status)}</td><td><button data-open="${a.id}">Enter scores</button></td></tr>`).join('')||'<tr><td colspan="6">No assessments are currently assigned to you.</td></tr>'}async function openAssessment(id){currentAssessment=Number(id);const aBtn=document.querySelector(`[data-open="${id}"]`);const {data:as,error:ae}=await sb.rpc('staff_get_assessments_v1');if(ae){notice(ae.message);return}const a=(as||[]).find(x=>Number(x.id)===currentAssessment);if(!a){notice('Assessment not assigned to this account.');return}const {data,error}=await sb.rpc('staff_get_assessment_students_v1',{p_assessment_id:currentAssessment});if(error){notice(error.message);return}currentRows=Array.isArray(data)?data:[];$('scoretitle').textContent=`${a.class_name} · ${a.subject_name} · CA ${a.ca_max} + Exam ${a.exam_max}`;$('students').innerHTML=currentRows.map(s=>`<tr data-student="${s.student_id}"><td>${esc(s.registration_number)}<br>${esc(s.student_name)}</td><td><input type="number" min="0" max="${a.ca_max}" step="0.5" class="ca" value="${s.ca_score}"></td><td><input type="number" min="0" max="${a.exam_max}" step="0.5" class="ex" value="${s.exam_score}"></td><td><input class="comment" value="${esc(s.teacher_comment||'')}" maxlength="500"></td></tr>`).join('')||'<tr><td colspan="4">No active students in this class.</td></tr>';$('scorecard').classList.remove('hidden');$('scorecard').dataset.ca=a.ca_max;$('scorecard').dataset.ex=a.exam_max;$('scorecard').scrollIntoView({behavior:'smooth'})}async function saveScores(){if(!currentAssessment)return false;const caMax=Number($('scorecard').dataset.ca),exMax=Number($('scorecard').dataset.ex);const scores=[];for(const tr of $('students').querySelectorAll('tr[data-student]')){const ca=Number(tr.querySelector('.ca').value),ex=Number(tr.querySelector('.ex').value);if(!Number.isFinite(ca)||!Number.isFinite(ex)||ca<0||ca>caMax||ex<0||ex>exMax){notice('A score is outside the allowed maximum. Please correct it.');return false}scores.push({student_id:Number(tr.dataset.student),ca_score:ca,exam_score:ex,teacher_comment:tr.querySelector('.comment').value})}const {data,error}=await sb.rpc('staff_save_assessment_scores_v1',{p_assessment_id:currentAssessment,p_scores:scores});if(error){notice(error.message);return}notice(data?.message||'Drafts saved.');return true}async function submitScores(){const saved=await saveScores();if(!saved)return;const {data,error}=await sb.rpc('staff_submit_assessment_v1',{p_assessment_id:currentAssessment});if(error){notice(error.message);return}notice(data?.message||'Submitted to HOD.');await loadAssessments()}$('assessments').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)openAssessment(b.dataset.open)});$('refresh').onclick=loadAssessments;$('save').onclick=saveScores;$('submit').onclick=submitScores;boot();
-</script></main></body></html>
+}
+
+let currentAssessment=null;
+
+function notice(t){
+$('notice').textContent=t;
+$('notice').classList.remove('hidden');
+}
+
+async function loadPortal(){
+
+const {data:who,error}=await sb.rpc('staff_portal_identity_v1');
+
+if(error){
+notice(error.message);
+return;
+}
+
+$('identity').textContent=
+`Welcome, ${who.full_name} · ${who.employee_number} · ${who.staff_role}`;
+
+await loadAssessments();
+}
+
+async function loadAssessments(){
+
+const {data,error}=await sb.rpc('staff_get_assessments_v1');
+
+if(error){
+notice(error.message);
+return;
+}
+
+const rows=Array.isArray(data)?data:[];
+
+$('assessments').innerHTML=rows.map(a=>`
+<tr>
+<td>${esc(a.assessment_name)}</td>
+<td>${esc(a.academic_session)}<br>${esc(a.term)}</td>
+<td>${esc(a.class_name)}</td>
+<td>${esc(a.subject_name)}</td>
+<td>${esc(a.status)}</td>
+<td><button data-open="${a.id}">Enter scores</button></td>
+</tr>
+`).join('')||
+'<tr><td colspan="6">No assessments are currently assigned to you.</td></tr>';
+}
+
+async function openAssessment(id){
+
+currentAssessment=Number(id);
+
+const {data:assessments,error:assessmentError}=
+await sb.rpc('staff_get_assessments_v1');
+
+if(assessmentError){
+notice(assessmentError.message);
+return;
+}
+
+const a=(assessments||[]).find(
+x=>Number(x.id)===currentAssessment
+);
+
+if(!a){
+notice('Assessment not assigned to this account.');
+return;
+}
+
+const maxima=[
+a.first_test_max,
+a.second_test_max,
+a.third_test_max,
+a.exam_component_max
+].map(Number);
+
+if(maxima.some(x=>!Number.isFinite(x)||x<0)){
+notice('Assessment maximum marks could not be loaded. Please contact the administrator.');
+return;
+}
+
+const {data,error}=await sb.rpc(
+'staff_get_assessment_students_v1',
+{p_assessment_id:currentAssessment}
+);
+
+if(error){
+notice(error.message);
+return;
+}
+
+const currentRows=Array.isArray(data)?data:[];
+
+$('scoretitle').textContent=
+`${a.class_name} · ${a.subject_name} · Maximum marks: ${maxima.reduce((x,y)=>x+y,0)}`;
+
+$('students').innerHTML=currentRows.map(s=>`
+<tr data-student="${s.student_id}">
+<td>
+${esc(s.registration_number)}<br>
+${esc(s.student_name)}
+</td>
+
+<td>
+<input type="number" min="0" max="${maxima[0]}" step="0.5"
+class="first" value="${s.first_test_score??''}"
+aria-label="First Test score">
+<small>Max: ${maxima[0]}</small>
+</td>
+
+<td>
+<input type="number" min="0" max="${maxima[1]}" step="0.5"
+class="second" value="${s.second_test_score??''}"
+aria-label="Second Test score">
+<small>Max: ${maxima[1]}</small>
+</td>
+
+<td>
+<input type="number" min="0" max="${maxima[2]}" step="0.5"
+class="third" value="${s.third_test_score??''}"
+aria-label="Third Test score">
+<small>Max: ${maxima[2]}</small>
+</td>
+
+<td>
+<input type="number" min="0" max="${maxima[3]}" step="0.5"
+class="exam" value="${s.exam_score??''}"
+aria-label="Examination score">
+<small>Max: ${maxima[3]}</small>
+</td>
+
+<td>
+<input class="comment"
+value="${esc(s.teacher_comment||'')}"
+maxlength="500"
+aria-label="Teacher comment">
+</td>
+</tr>
+`).join('')||
+'<tr><td colspan="6">No active students in this class.</td></tr>';
+
+$('scorecard').dataset.first=maxima[0];
+$('scorecard').dataset.second=maxima[1];
+$('scorecard').dataset.third=maxima[2];
+$('scorecard').dataset.exam=maxima[3];
+
+$('scorecard').classList.remove('hidden');
+$('scorecard').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveScores(){
+
+if(!currentAssessment)return false;
+
+const maxima={
+first:Number($('scorecard').dataset.first),
+second:Number($('scorecard').dataset.second),
+third:Number($('scorecard').dataset.third),
+exam:Number($('scorecard').dataset.exam)
+};
+
+const scores=[];
+
+for(const tr of $('students').querySelectorAll('tr[data-student]')){
+
+const inputs={
+first:tr.querySelector('.first').value,
+second:tr.querySelector('.second').value,
+third:tr.querySelector('.third').value,
+exam:tr.querySelector('.exam').value
+};
+
+const values={};
+
+for(const key of Object.keys(inputs)){
+
+if(inputs[key]===''){
+values[key]=null;
+continue;
+}
+
+const score=Number(inputs[key]);
+
+if(
+!Number.isFinite(score)||
+score<0||
+score>maxima[key]
+){
+notice(`A ${key} score is outside the allowed maximum. Please correct it.`);
+return false;
+}
+
+values[key]=score;
+}
+
+scores.push({
+student_id:Number(tr.dataset.student),
+first_test_score:values.first,
+second_test_score:values.second,
+third_test_score:values.third,
+exam_score:values.exam,
+teacher_comment:tr.querySelector('.comment').value
+});
+}
+
+const {data,error}=await sb.rpc(
+'staff_save_assessment_scores_v1',
+{
+p_assessment_id:currentAssessment,
+p_scores:scores
+}
+);
+
+if(error){
+notice(error.message);
+return false;
+}
+
+notice(data?.message||'Drafts saved successfully.');
+return true;
+}
+
+async function submitScores(){
+
+const saved=await saveScores();
+
+if(!saved)return;
+
+const {data,error}=await sb.rpc(
+'staff_submit_assessment_v1',
+{p_assessment_id:currentAssessment}
+);
+
+if(error){
+notice(error.message);
+return;
+}
+
+notice(data?.message||'Submitted to HOD successfully.');
+
+await loadAssessments();
+}
+
+$('assessments').addEventListener('click',e=>{
+const b=e.target.closest('[data-open]');
+if(b)openAssessment(b.dataset.open);
+});
+
+$('refresh').onclick=loadAssessments;
+$('save').onclick=saveScores;
+$('submit').onclick=submitScores;
+
+boot();
+</script>
+
+</main>
+</body>
+</html>
